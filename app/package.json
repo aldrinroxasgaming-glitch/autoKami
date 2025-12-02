@@ -1,0 +1,36 @@
+{
+  "name": "kamigotchi-app",
+  "version": "1.0.0",
+  "description": "Kamigotchi World Management App",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "tsc",
+    "build:frontend": "cd frontend && npm run build",
+    "start": "node dist/index.js",
+    "test": "tsx src/test/kami-retrieval.test.ts",
+    "test:account": "tsx src/test/account-kamis.test.ts",
+    "test:harvest:start": "tsx src/test/testStartHarvest.ts",
+    "test:harvest:stop": "tsx src/test/testStopHarvest.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.84.0",
+    "@types/crypto-js": "^4.2.2",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.5",
+    "axios": "^1.13.2",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

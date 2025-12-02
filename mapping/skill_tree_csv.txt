@@ -1,0 +1,73 @@
+Tree,Tier,Skill ID,Skill Name,Image Link,Stat Bonus
+Predator,1,111,Aggression,https://app.kamigotchi.io/assets/aggression-fPDOHm5y.png,1 violence
+Predator,1,112,Grit,https://app.kamigotchi.io/assets/grit-DJICsy1S.png,10 health
+Predator,1,113,Mercenary,https://app.kamigotchi.io/assets/professional-COViVpv-.png,2% atk spoils ratio
+Predator,2,121,Professional,https://app.kamigotchi.io/assets/professional-COViVpv-.png,5% atk threshold ratio
+Predator,2,122,Cruelty,https://app.kamigotchi.io/assets/cruelty-CMr3gSxO.png,2% atk threshold shift
+Predator,2,123,Sniper,https://app.kamigotchi.io/assets/sniper-C68GIPOc.png,-10s standard cooldown shift
+Predator,3,131,Warmonger,https://app.kamigotchi.io/assets/warmonger-gLeWPM0l.png,3 violence
+Predator,3,132,Vampire,https://app.kamigotchi.io/assets/vampire-C03apBTT.png,5% defense salvage ratio
+Predator,3,133,Bandit,https://app.kamigotchi.io/assets/bandit-DC5e9E8E.png,5% atk spoils ratio
+Predator,4,141,Hungry,https://app.kamigotchi.io/assets/hungry-CczAv7Mn.png,1 power
+Predator,4,142,Brutality,https://app.kamigotchi.io/assets/brutality-CD1ZRi8-.png,2% atk threshold shift
+Predator,4,143,Marksman,https://app.kamigotchi.io/assets/marksman-CnrFR5j2.png,-10s standard cooldown shift
+Predator,5,151,Specialist,https://app.kamigotchi.io/assets/specialist-BE8KRsyo.png,5% atk threshold ratio
+Predator,5,152,First Aid,https://app.kamigotchi.io/assets/first_aid-Bp8GKv6D.png,5% defense salvage ratio
+Predator,5,153,Bounty Hunter,https://app.kamigotchi.io/assets/bounty_hunter-Cq-Jn8gi.png,2% atk spoils ratio
+Predator,6,161,Warlord,https://app.kamigotchi.io/assets/warlord-DJhX_l9_.png,5 violence
+Predator,6,162,Lethality,https://app.kamigotchi.io/assets/lethality-CbfNws5Z.png,5% atk threshold shift
+Predator,6,163,Assassin,https://app.kamigotchi.io/assets/assassin-B8NRq7tG.png,-50s standard cooldown shift
+Enlightened,1,211,Self Care,https://app.kamigotchi.io/assets/self_care-D4UBIQxc.png,5% Metabolism Boost
+Enlightened,1,212,Cardio,https://app.kamigotchi.io/assets/cardio-Er62keJM.png,10 Health
+Enlightened,1,213,Good Constitution,https://app.kamigotchi.io/assets/good_constitution-Ddtemj-m.png,6% Fertility Boost
+Enlightened,2,221,Focus,https://app.kamigotchi.io/assets/focus-B3KI3eh_.png,4% Bounty Boost
+Enlightened,2,222,Meditative Breathing,https://app.kamigotchi.io/assets/meditative_breathing-CfjMsZHH.png,2% Defense Shift
+Enlightened,2,223,Concentration,https://app.kamigotchi.io/assets/concentration-CAw5whjV.png,-2.5% Strain
+Enlightened,3,231,Sleep Hygiene,https://app.kamigotchi.io/assets/sleep_hygiene-CUJLSp2b.png,15% Metabolism Boost
+Enlightened,3,232,Warmup Exercise,https://app.kamigotchi.io/assets/warmup_exercise-D8eZGXAP.png,15/hr Intensity Boost
+Enlightened,3,233,Advanced Mewing,https://app.kamigotchi.io/assets/advanced_mewing-DGzEVGAI.png,18% Fertility Boost
+Enlightened,4,241,Momentum,https://app.kamigotchi.io/assets/flow-C2OKOBT6.png,4% Bounty Boost
+Enlightened,4,242,Therapy,https://app.kamigotchi.io/assets/therapy-WQWt9sZa.png,2% Defense Shift
+Enlightened,4,243,Endurance,https://app.kamigotchi.io/assets/endurance-CXWqP2At.png,-2.5% Strain
+Enlightened,5,251,Regeneration,https://app.kamigotchi.io/assets/regeneration-C6gQ7BEx.png,5% Metabolism Boost
+Enlightened,5,252,Workout Routine,https://app.kamigotchi.io/assets/workout_routine-BvASzAFF.png,5/hr Intensity Boost
+Enlightened,5,253,Productivity,https://app.kamigotchi.io/assets/productivity-CKnAsj6a.png,6% Fertility Boost
+Enlightened,6,261,Wu Wei,https://app.kamigotchi.io/assets/wu_wei-hx-a2oM3.png,20% Bounty Boost
+Enlightened,6,262,Spin Class,https://app.kamigotchi.io/assets/spin_class-DIR19gmw.png,50 Health
+Enlightened,6,263,Immortality,https://app.kamigotchi.io/assets/immortality-Cr_v7lMf.png,-12.5% Strain
+Guardian,1,311,Defensiveness,https://app.kamigotchi.io/assets/defensiveness-D5FYByVw.png,1 Harmony
+Guardian,1,312,Toughness,https://app.kamigotchi.io/assets/toughness-COmOt8mG.png,10 Health
+Guardian,1,313,Patience,https://app.kamigotchi.io/assets/patience-CBM-U_zG.png,5/hr Intensity Boost
+Guardian,2,321,Meticulous,https://app.kamigotchi.io/assets/meticulous-B2voXcv-.png,-5% Defense Ratio
+Guardian,2,322,Vigor,https://app.kamigotchi.io/assets/vigor-B-vN7zvw.png,10 Health
+Guardian,2,323,Armor,https://app.kamigotchi.io/assets/armor-CUvog5WW.png,-2% Defense Shift
+Guardian,3,331,Anxiety,https://app.kamigotchi.io/assets/anxiety-gxJSodNe.png,3 Harmony
+Guardian,3,332,Die Hard,https://app.kamigotchi.io/assets/die_hard-CX6aRnfs.png,-7.5% Strain
+Guardian,3,333,Loyalty,https://app.kamigotchi.io/assets/loyalty-C77abdrH.png,15/hr Intensity Boost
+Guardian,4,341,Flawless,https://app.kamigotchi.io/assets/flawless-DfLk6FQG.png,-5% Defense Ratio
+Guardian,4,342,Dedication,https://app.kamigotchi.io/assets/dedication-DUHrdgTg.png,5/hr Intensity Boost
+Guardian,4,343,Shielding,https://app.kamigotchi.io/assets/shielding-CDSUhOC3.png,-2% Defense Shift
+Guardian,5,351,Powerhouse,https://app.kamigotchi.io/assets/powerhouse-BZVLJCN7.png,1 Violence
+Guardian,5,352,Hefty,https://app.kamigotchi.io/assets/heft-DfTbHiyB.png,10 Health
+Guardian,5,353,Fortress,https://app.kamigotchi.io/assets/fortress-DzBl0Apq.png,-2% Defense Shift
+Guardian,6,361,Neurosis,https://app.kamigotchi.io/assets/neurosis-BgJhhd47.png,5 Harmony
+Guardian,6,362,Undying,https://app.kamigotchi.io/assets/undying-BRjBD67J.png,-12.5% Strain
+Guardian,6,363,Obsession,https://app.kamigotchi.io/assets/obsession-CAoq-OcT.png,25/hr Intensity Boost
+Harvester,1,411,Acquisitiveness,https://app.kamigotchi.io/assets/acquisitiveness-BEUA9MGW.png,1 Power
+Harvester,1,412,Mogging,https://app.kamigotchi.io/assets/mogging-GXrkIEcL.png,10 Health
+Harvester,1,413,Greed,https://app.kamigotchi.io/assets/greed-DlvUiNSi.png,4% Bounty Boost
+Harvester,2,421,Wide Portfolio,https://app.kamigotchi.io/assets/wide_portfolio-DW-tj0Ia.png,-2.5% Strain
+Harvester,2,422,Side Hustles,https://app.kamigotchi.io/assets/side_hustles-DIlNZFiI.png,6% Fertility Boost
+Harvester,2,423,Hedging,https://app.kamigotchi.io/assets/hedging-oTyDdUU-.png,2% Salvage Ratio
+Harvester,3,431,Technical Analysis,https://app.kamigotchi.io/assets/technical_analysis-lQjW8G8X.png,3 Power
+Harvester,3,432,Daylight Savings,https://app.kamigotchi.io/assets/daylight_savings-CncZZKoy.png,-5% Defense Shift
+Harvester,3,433,Leverage,https://app.kamigotchi.io/assets/leverage-BD4ScNtv.png,10% Bounty Boost
+Harvester,4,441,Opportunist,https://app.kamigotchi.io/assets/opportunist-2RqC8NsY.png,1 Violence
+Harvester,4,442,Trading Courses,https://app.kamigotchi.io/assets/trading_courses-mL6aZB2L.png,6% Fertility Boost
+Harvester,4,443,Index Funds,https://app.kamigotchi.io/assets/index_funds-CmTD13P-.png,1 Harmony
+Harvester,5,451,Time in the Market,https://app.kamigotchi.io/assets/time_in_the_market-BFVOi9S4.png,-2.5% Strain
+Harvester,5,452,Looping,https://app.kamigotchi.io/assets/looping-DUup9RPr.png,10 Health
+Harvester,5,453,Stimulants,https://app.kamigotchi.io/assets/stimulants-oWNJ2i1l.png,4% Bounty Boost
+Harvester,6,461,Intelligent Investor,https://app.kamigotchi.io/assets/intelligent_investor-DQxqfgre.png,5 Power
+Harvester,6,462,Paid Groupchat,https://app.kamigotchi.io/assets/paid_groupchat-C4Te42Ja.png,30% Fertility Boost
+Harvester,6,463,Coward,https://app.kamigotchi.io/assets/coward-DBPNiNvD.png,10% Salvage Ratio

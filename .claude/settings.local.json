@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsx scripts/testKamiSkills.ts 1)",
+      "Bash(npx tsx:*)",
+      "Bash(dir \"C:\\Users\\Yuuki\\Kami\\kamigotchi-abis\\code snippets\")",
+      "Bash(npm run build)",
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm install:*)",
+      "Bash(del \"C:\\Users\\Yuuki\\Kami\\kamigotchi-abis\\app\\frontend\\src\\App.css\" 2)",
+      "Bash(nul)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

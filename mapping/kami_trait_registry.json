@@ -1,0 +1,1398 @@
+{
+  "body": {
+    "0": {
+      "name": "Battery",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        40,
+        0,
+        0,
+        0
+      ]
+    },
+    "1": {
+      "name": "Bee",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        4,
+        0,
+        0
+      ]
+    },
+    "2": {
+      "name": "Butterfly",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        7,
+        0,
+        0
+      ]
+    },
+    "3": {
+      "name": "Caterpillar",
+      "type": "INSECT",
+      "stats": [
+        2,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    "4": {
+      "name": "Cube",
+      "type": "NORMAL",
+      "stats": [
+        4,
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "5": {
+      "name": "Ghost",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        10,
+        1,
+        1,
+        0
+      ]
+    },
+    "6": {
+      "name": "Drip",
+      "type": "EERIE",
+      "stats": [
+        3,
+        10,
+        0,
+        0,
+        0
+      ]
+    },
+    "7": {
+      "name": "Lightbulb",
+      "type": "SCRAP",
+      "stats": [
+        3,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    "8": {
+      "name": "Working CRT Monitor ",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        20,
+        0,
+        5,
+        0
+      ]
+    },
+    "9": {
+      "name": "Broken CRT Monitor",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        40,
+        0,
+        2,
+        0
+      ]
+    },
+    "10": {
+      "name": "Octahedron",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        0,
+        1,
+        1,
+        2
+      ]
+    },
+    "11": {
+      "name": "Octopus",
+      "type": "EERIE",
+      "stats": [
+        4,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "12": {
+      "name": "Orb",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        0,
+        0,
+        4,
+        0
+      ]
+    },
+    "13": {
+      "name": "Pumpkin",
+      "type": "EERIE",
+      "stats": [
+        4,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "14": {
+      "name": "Tube",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        10,
+        2,
+        1,
+        0
+      ]
+    },
+    "15": {
+      "name": "Jellyfish",
+      "type": "EERIE",
+      "stats": [
+        3,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "16": {
+      "name": "Eyes",
+      "type": "EERIE",
+      "stats": [
+        6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "17": {
+      "name": "Amphora",
+      "type": "SCRAP",
+      "stats": [
+        2,
+        0,
+        0,
+        4,
+        0
+      ]
+    },
+    "18": {
+      "name": "Shrimp",
+      "type": "INSECT",
+      "stats": [
+        3,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "19": {
+      "name": "Spider",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        6,
+        0,
+        0
+      ]
+    },
+    "20": {
+      "name": "Plant",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        0,
+        0,
+        5,
+        0
+      ]
+    },
+    "21": {
+      "name": "Magatama",
+      "type": "NORMAL",
+      "stats": [
+        3,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "22": {
+      "name": "Snake",
+      "type": "INSECT",
+      "stats": [
+        3,
+        0,
+        3,
+        3,
+        0
+      ]
+    },
+    "23": {
+      "name": "Tank",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        30,
+        0,
+        6,
+        0
+      ]
+    },
+    "24": {
+      "name": "Hagoromo",
+      "type": "EERIE",
+      "stats": [
+        9,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "25": {
+      "name": "Lotus",
+      "type": "EERIE",
+      "stats": [
+        0,
+        20,
+        0,
+        4,
+        0
+      ]
+    },
+    "26": {
+      "name": "Ant",
+      "type": "INSECT",
+      "stats": [
+        2,
+        20,
+        0,
+        2,
+        0
+      ]
+    },
+    "27": {
+      "name": "Soda Cup",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        50,
+        0,
+        0,
+        0
+      ]
+    },
+    "28": {
+      "name": "Suit",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        0,
+        6,
+        3,
+        0
+      ]
+    },
+    "29": {
+      "name": "No Kami",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        70,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "hands": {
+    "0": {
+      "name": "Candles",
+      "type": "EERIE",
+      "stats": [
+        7,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "1": {
+      "name": "Spectral",
+      "type": "EERIE",
+      "stats": [
+        2,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "2": {
+      "name": "Spinning Coins",
+      "type": "NORMAL",
+      "stats": [
+        3,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "3": {
+      "name": "Coins",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        50,
+        0,
+        0,
+        0
+      ]
+    },
+    "4": {
+      "name": "Orbs",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "5": {
+      "name": "Eyeballs",
+      "type": "EERIE",
+      "stats": [
+        6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "6": {
+      "name": "Fan Blades",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        10,
+        3,
+        3,
+        0
+      ]
+    },
+    "7": {
+      "name": "Beetle",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    "8": {
+      "name": "Mantis",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        7,
+        0,
+        0
+      ]
+    },
+    "9": {
+      "name": "Paws",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    "10": {
+      "name": "Plugs",
+      "type": "SCRAP",
+      "stats": [
+        1,
+        10,
+        0,
+        2,
+        0
+      ]
+    },
+    "11": {
+      "name": "Scorpion",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        4,
+        0,
+        0
+      ]
+    },
+    "12": {
+      "name": "Tentacles",
+      "type": "EERIE",
+      "stats": [
+        0,
+        0,
+        5,
+        0,
+        0
+      ]
+    },
+    "13": {
+      "name": "Toasters",
+      "type": "SCRAP",
+      "stats": [
+        3,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "14": {
+      "name": "UFO Catcher",
+      "type": "SCRAP",
+      "stats": [
+        3,
+        0,
+        0,
+        3,
+        0
+      ]
+    },
+    "15": {
+      "name": "Wrenches",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        0,
+        4,
+        0,
+        0
+      ]
+    },
+    "16": {
+      "name": "Mole Cricket",
+      "type": "INSECT",
+      "stats": [
+        3,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "17": {
+      "name": "Plant",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        0,
+        0,
+        5,
+        0
+      ]
+    },
+    "18": {
+      "name": "Guns",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        0,
+        6,
+        0,
+        0
+      ]
+    },
+    "19": {
+      "name": "Torus",
+      "type": "NORMAL",
+      "stats": [
+        3,
+        0,
+        0,
+        4,
+        0
+      ]
+    },
+    "20": {
+      "name": "Crab",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        6,
+        0,
+        0
+      ]
+    },
+    "21": {
+      "name": "Melted",
+      "type": "EERIE",
+      "stats": [
+        4,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "22": {
+      "name": "Wassie Flipper",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        20,
+        0,
+        2,
+        0
+      ]
+    },
+    "23": {
+      "name": "Mudra",
+      "type": "EERIE",
+      "stats": [
+        6,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "24": {
+      "name": "Van de Graaf",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        30,
+        0,
+        6,
+        0
+      ]
+    },
+    "25": {
+      "name": "Fairy",
+      "type": "INSECT",
+      "stats": [
+        3,
+        30,
+        0,
+        3,
+        0
+      ]
+    },
+    "26": {
+      "name": "Wings",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        90,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "face": {
+    "0": {
+      "name": "._.",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    "1": {
+      "name": ".w.",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    "2": {
+      "name": "n_n",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        10,
+        0,
+        0,
+        0
+      ]
+    },
+    "3": {
+      "name": ">_>",
+      "type": "SCRAP",
+      "stats": [
+        1,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "4": {
+      "name": "^-^",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "5": {
+      "name": "v_v",
+      "type": "SCRAP",
+      "stats": [
+        2,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    "6": {
+      "name": "o_O",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        10,
+        1,
+        0,
+        0
+      ]
+    },
+    "7": {
+      "name": "O_o",
+      "type": "NORMAL",
+      "stats": [
+        1,
+        10,
+        0,
+        1,
+        0
+      ]
+    },
+    "8": {
+      "name": "-_-",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        10,
+        2,
+        0,
+        0
+      ]
+    },
+    "9": {
+      "name": "x_x ",
+      "type": "INSECT",
+      "stats": [
+        3,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "10": {
+      "name": "o_o",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "11": {
+      "name": "O_0",
+      "type": "EERIE",
+      "stats": [
+        0,
+        20,
+        0,
+        1,
+        0
+      ]
+    },
+    "12": {
+      "name": "Teddy",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        10,
+        0,
+        2,
+        0
+      ]
+    },
+    "13": {
+      "name": "Disapproval",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        4,
+        0,
+        0
+      ]
+    },
+    "14": {
+      "name": "HeartS",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        20,
+        0,
+        3,
+        0
+      ]
+    },
+    "15": {
+      "name": "Impacted",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        0,
+        1,
+        2,
+        0
+      ]
+    },
+    "16": {
+      "name": "Sideeye",
+      "type": "EERIE",
+      "stats": [
+        0,
+        0,
+        0,
+        4,
+        0
+      ]
+    },
+    "17": {
+      "name": "Lenny 2",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        0,
+        0,
+        2,
+        1
+      ]
+    },
+    "18": {
+      "name": ":3",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        2,
+        2,
+        0
+      ]
+    },
+    "19": {
+      "name": "Unamused",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        20,
+        2,
+        0,
+        0
+      ]
+    },
+    "20": {
+      "name": "Ou0",
+      "type": "EERIE",
+      "stats": [
+        0,
+        0,
+        0,
+        5,
+        0
+      ]
+    },
+    "21": {
+      "name": "Concerned",
+      "type": "NORMAL",
+      "stats": [
+        0,
+        40,
+        0,
+        0,
+        0
+      ]
+    },
+    "22": {
+      "name": "Lenny 1",
+      "type": "NORMAL",
+      "stats": [
+        2,
+        0,
+        2,
+        2,
+        1
+      ]
+    },
+    "23": {
+      "name": "Serious Teddy",
+      "type": "NORMAL",
+      "stats": [
+        3,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    "24": {
+      "name": "Drip",
+      "type": "EERIE",
+      "stats": [
+        4,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "25": {
+      "name": "Insectoid",
+      "type": "INSECT",
+      "stats": [
+        3,
+        0,
+        3,
+        0,
+        0
+      ]
+    },
+    "26": {
+      "name": "Insectoid (Partisan)",
+      "type": "INSECT",
+      "stats": [
+        0,
+        0,
+        6,
+        0,
+        0
+      ]
+    },
+    "27": {
+      "name": "N+B",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        30,
+        0,
+        3,
+        0
+      ]
+    },
+    "28": {
+      "name": "Sensor",
+      "type": "SCRAP",
+      "stats": [
+        0,
+        0,
+        0,
+        6,
+        0
+      ]
+    },
+    "29": {
+      "name": "Sated",
+      "type": "EERIE",
+      "stats": [
+        3,
+        0,
+        3,
+        0,
+        0
+      ]
+    },
+    "30": {
+      "name": "Hungry",
+      "type": "EERIE",
+      "stats": [
+        0,
+        0,
+        6,
+        0,
+        0
+      ]
+    },
+    "31": {
+      "name": "Wassie",
+      "type": "",
+      "stats": [
+        2,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "32": {
+      "name": "Jiangshi Hat",
+      "type": "",
+      "stats": [
+        6,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "33": {
+      "name": "Sunglasses",
+      "type": "",
+      "stats": [
+        4,
+        40,
+        0,
+        0,
+        0
+      ]
+    },
+    "34": {
+      "name": "Nerd",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        0,
+        4,
+        1
+      ]
+    },
+    "35": {
+      "name": "Third Eye",
+      "type": "",
+      "stats": [
+        0,
+        60,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "background": {
+    "0": {
+      "name": "Blue",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "1": {
+      "name": "Blue-Grey",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    "2": {
+      "name": "Default Green",
+      "type": "",
+      "stats": [
+        0,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "3": {
+      "name": "Alt Green",
+      "type": "",
+      "stats": [
+        2,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "4": {
+      "name": "Grey!",
+      "type": "",
+      "stats": [
+        0,
+        40,
+        0,
+        0,
+        0
+      ]
+    },
+    "5": {
+      "name": "Hot Pink",
+      "type": "",
+      "stats": [
+        0,
+        10,
+        1,
+        0,
+        0
+      ]
+    },
+    "6": {
+      "name": "Lavender!",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        4,
+        0,
+        0
+      ]
+    },
+    "7": {
+      "name": "BOG",
+      "type": "",
+      "stats": [
+        3,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "8": {
+      "name": "BSOD ",
+      "type": "",
+      "stats": [
+        0,
+        20,
+        0,
+        3,
+        0
+      ]
+    },
+    "9": {
+      "name": "GOB",
+      "type": "",
+      "stats": [
+        0,
+        20,
+        3,
+        0,
+        0
+      ]
+    },
+    "10": {
+      "name": "PURPLE!!!",
+      "type": "",
+      "stats": [
+        5,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "11": {
+      "name": "RED!!!",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        5,
+        0,
+        0
+      ]
+    },
+    "12": {
+      "name": "GREY!!!!",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        0,
+        5,
+        0
+      ]
+    },
+    "13": {
+      "name": "Mustard",
+      "type": "",
+      "stats": [
+        0,
+        10,
+        0,
+        1,
+        0
+      ]
+    },
+    "14": {
+      "name": "Orange",
+      "type": "",
+      "stats": [
+        1,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    "15": {
+      "name": "Pink",
+      "type": "",
+      "stats": [
+        0,
+        10,
+        0,
+        1,
+        0
+      ]
+    },
+    "16": {
+      "name": "Purple",
+      "type": "",
+      "stats": [
+        0,
+        10,
+        1,
+        0,
+        0
+      ]
+    },
+    "17": {
+      "name": "Red!",
+      "type": "",
+      "stats": [
+        4,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "18": {
+      "name": "Rust",
+      "type": "",
+      "stats": [
+        1,
+        10,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "color": {
+    "0": {
+      "name": "1BIT BW",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        0,
+        5,
+        0
+      ]
+    },
+    "1": {
+      "name": "1BIT GREEN",
+      "type": "",
+      "stats": [
+        5,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "2": {
+      "name": "1BIT PINK",
+      "type": "",
+      "stats": [
+        0,
+        50,
+        0,
+        0,
+        0
+      ]
+    },
+    "3": {
+      "name": "1BIT WR",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        5,
+        0,
+        0
+      ]
+    },
+    "4": {
+      "name": "Blue",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        0,
+        2,
+        0
+      ]
+    },
+    "5": {
+      "name": "Green",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        1,
+        1,
+        0
+      ]
+    },
+    "6": {
+      "name": "Grey",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        3,
+        0,
+        0
+      ]
+    },
+    "7": {
+      "name": "Lime Green",
+      "type": "",
+      "stats": [
+        0,
+        30,
+        0,
+        0,
+        0
+      ]
+    },
+    "8": {
+      "name": "Orange",
+      "type": "",
+      "stats": [
+        0,
+        20,
+        0,
+        0,
+        0
+      ]
+    },
+    "9": {
+      "name": "Pink",
+      "type": "",
+      "stats": [
+        2,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "10": {
+      "name": "Purple",
+      "type": "",
+      "stats": [
+        3,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "11": {
+      "name": "Red",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        2,
+        0,
+        0
+      ]
+    },
+    "12": {
+      "name": "White",
+      "type": "",
+      "stats": [
+        0,
+        0,
+        0,
+        3,
+        0
+      ]
+    },
+    "13": {
+      "name": "Yellow",
+      "type": "",
+      "stats": [
+        1,
+        0,
+        1,
+        0,
+        0
+      ]
+    }
+  }
+}

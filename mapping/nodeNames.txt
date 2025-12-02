@@ -1,0 +1,65 @@
+NodeID,Name,Affinity,LevelLimit,YieldIndex,ScavCost
+1,Misty Riverside,Eerie,15,1,100
+2,Tunnel of Trees,Normal,15,1,100
+3,Torii Gate,Normal,15,1,100
+5,Restricted Area,Normal,,1,100
+6,Labs Entrance,Eerie,,1,100
+9,Forest: Old Growth,Insect,,1,200
+10,Forest: Insect Node,Insect,,1,200
+12,Scrap Confluence,Scrap,,1,500
+15,Temple Cave,Scrap,,1,100
+16,Techno Temple,"Eerie, Scrap",,1,500
+18,Cave Crossroads,Insect,,2,200
+19,Temple of the Wheel,"Eerie, Scrap",,1,300
+25,Lost Skeleton,Eerie,,1,200
+26,Trash-Strewn Graves,Eerie,,1,100
+29,Misty Forest Path,Insect,15,1,100
+30,Scrapyard Entrance,Scrap,15,1,100
+31,Scrapyard Exit,Scrap,,1,100
+32,Road To Labs,Normal,,1,100
+33,Forest Entrance,Normal,,1,200
+34,Deeper Into Scrap,Scrap,,1,300
+35,Elder Path,Normal,,1,200
+36,Parting Path,Insect,,1,200
+37,Hollow Path,Normal,,1,200
+47,Scrap Paths,Scrap,,1,100
+48,Murky Forest Path,Insect,,1,200
+49,Clearing,Normal,,1,300
+50,Ancient Forest Entrance,Insect,,1,200
+51,Scrap-Littered Undergrowth,Insect,,1,300
+52,Airplane Crash,Eerie,,1,300
+53,Blooming Tree,Eerie,,1,300
+55,Shady Path,Normal,,1,200
+56,Butterfly Forest,Insect,,1,200
+57,River Crossing,Normal,,1,200
+58,Mouth of Scrap,Scrap,,1,100
+59,Black Pool,Eerie,,1,100
+60,Scrap Trees,Scrap,,2,500
+61,Musty Forest Path,Normal,,2,200
+62,Centipedes,Insect,,2,300
+63,Deeper Forest Path,Normal,,2,300
+65,Forest Hut,Eerie,,2,200
+67,Boulder Tunnel,Normal,,1,200
+68,Slippery Pit,Normal,,1,200
+69,Lotus Pool,Eerie,,1,500
+70,Still Stream,Normal,,1,100
+71,Shabby Deck,Insect,,1,200
+72,Hatch to Nowhere,"Insect, Scrap",,1,500
+73,Broken Tube,Scrap,,2,300
+74,Engraved Door,Eerie,,1,200
+75,Flood Mural,Eerie,,2,200
+76,Fungus Garden,Insect,,1,500
+77,Thriving Mushrooms,Insect,,1,100
+78,Toadstool Platforms,Insect,,1,200
+79,Abandoned Campsite,Normal,,2,100
+80,Radiant Crystal,Eerie,,1,200
+81,Flower Mural,Normal,,1,200
+82,Geometric Cliffs,Scrap,,1,500
+83,Canyon Bridge,Normal,,2,100
+84,Reinforced Tunnel,Scrap,,1,200
+85,Giant's Palm,Normal,,1,200
+86,Guardian Skull,"Eerie, Insect",,1,500
+87,Sacrarium,Eerie,,1,300
+88,Treasure Hoard,Scrap,,2,300
+89,Trophies of the Hunt,Insect,,1,300
+90,Scenic View,Eerie,,1,200

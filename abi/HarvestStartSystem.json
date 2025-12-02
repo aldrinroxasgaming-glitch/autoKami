@@ -72,7 +72,17 @@
           "internalType": "uint256"
         },
         {
-          "name": "nodeID",
+          "name": "nodeIndex",
+          "type": "uint32",
+          "internalType": "uint32"
+        },
+        {
+          "name": "taxerID",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "taxAmt",
           "type": "uint256",
           "internalType": "uint256"
         }
@@ -222,7 +232,7 @@
     "completeOwnershipHandover(address)": "f04e283e",
     "deprecate()": "0fcc0c28",
     "execute(bytes)": "09c5eabe",
-    "executeTyped(uint256,uint256)": "915657fb",
+    "executeTyped(uint256,uint32,uint256,uint256)": "ac3b66b9",
     "owner()": "8da5cb5b",
     "ownershipHandoverExpiresAt(address)": "fee81cf4",
     "renounceOwnership()": "715018a6",

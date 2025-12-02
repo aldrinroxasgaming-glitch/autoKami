@@ -1,0 +1,514 @@
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
+import dotenv from 'dotenv';
+import { telegram } from './telegram.js';
+
+dotenv.config();
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default-key-change-in-production';
+
+let supabase: SupabaseClient;
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.warn('⚠️  WARNING: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY/SUPABASE_ANON_KEY are not set.');
+  throw new Error('Supabase credentials not configured');
+} else {
+  // Initialize Supabase client
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  console.log('✅ Supabase client initialized');
+}
+
+// Encryption utilities using AES-256-GCM
+const ALGORITHM = 'aes-256-gcm';
+const IV_LENGTH = 16;
+const SALT_LENGTH = 64;
+const TAG_LENGTH = 16;
+const KEY_LENGTH = 32;
+
+function deriveKey(password: string, salt: Buffer): Buffer {
+  return crypto.pbkdf2Sync(password, salt, 100000, KEY_LENGTH, 'sha512');
+}
+
+export function encryptPrivateKey(privateKey: string, password: string = ENCRYPTION_KEY): string {
+  const salt = crypto.randomBytes(SALT_LENGTH);
+  const key = deriveKey(password, salt);
+  const iv = crypto.randomBytes(IV_LENGTH);
+  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+
+  let encrypted = cipher.update(privateKey, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const authTag = cipher.getAuthTag();
+
+  // Combine salt + iv + authTag + encrypted
+  const result = Buffer.concat([salt, iv, authTag, Buffer.from(encrypted, 'hex')]);
+  return result.toString('base64');
+}
+
+export function decryptPrivateKey(encryptedData: string, password: string = ENCRYPTION_KEY): string {
+  const buffer = Buffer.from(encryptedData, 'base64');
+
+  const salt = buffer.subarray(0, SALT_LENGTH);
+  const iv = buffer.subarray(SALT_LENGTH, SALT_LENGTH + IV_LENGTH);
+  const authTag = buffer.subarray(SALT_LENGTH + IV_LENGTH, SALT_LENGTH + IV_LENGTH + TAG_LENGTH);
+  const encrypted = buffer.subarray(SALT_LENGTH + IV_LENGTH + TAG_LENGTH);
+
+  const key = deriveKey(password, salt);
+  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
+  decipher.setAuthTag(authTag);
+
+  let decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+
+  return decrypted;
+}
+
+// User operations
+export interface User {
+  id: string;
+  privy_user_id: string;
+  email?: string;
+  wallet_address?: string;
+  telegram_bot_token?: string;
+  telegram_chat_id?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getUserByPrivyId(privyUserId: string): Promise<User | null> {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', privyUserId) // Use ID directly
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null; // Not found
+    throw error;
+  }
+
+  return data;
+}
+
+export async function createUser(privyUserId: string, email?: string, walletAddress?: string): Promise<User> {
+  const { data, error } = await supabase
+    .from('users')
+    .insert({
+      id: privyUserId, // Explicitly set ID to Privy ID
+      privy_user_id: privyUserId,
+      email,
+      wallet_address: walletAddress
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getOrCreateUser(privyUserId: string, email?: string, walletAddress?: string): Promise<User> {
+  let user = await getUserByPrivyId(privyUserId);
+  if (!user) {
+    user = await createUser(privyUserId, email, walletAddress);
+  }
+  return user;
+}
+
+export async function updateUserTelegramSettings(userId: string, botToken: string, chatId: string): Promise<User> {
+  const { data, error } = await supabase
+    .from('users')
+    .update({
+      telegram_bot_token: botToken,
+      telegram_chat_id: chatId
+    })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// Operator Wallet (Profile) operations
+export interface OperatorWallet {
+  id: string;
+  user_id: string;
+  name: string;
+  account_id: string;
+  wallet_address: string;
+  encrypted_private_key: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function addOperatorWallet(
+  userId: string,
+  name: string,
+  accountId: string,
+  walletAddress: string,
+  privateKey: string
+): Promise<OperatorWallet> {
+  const encryptedKey = encryptPrivateKey(privateKey);
+
+  const { data, error } = await supabase
+    .from('operator_wallets')
+    .insert({
+      user_id: userId,
+      name,
+      account_id: accountId,
+      wallet_address: walletAddress,
+      encrypted_private_key: encryptedKey,
+      is_active: true
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getOperatorWallets(userId: string): Promise<OperatorWallet[]> {
+  const { data, error } = await supabase
+    .from('operator_wallets')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function deleteOperatorWallet(walletId: string): Promise<void> {
+  const { error } = await supabase
+    .from('operator_wallets')
+    .delete()
+    .eq('id', walletId);
+
+  if (error) throw error;
+}
+
+// Kamigotchi operations
+export interface Kamigotchi {
+  id: string;
+  user_id: string;
+  operator_wallet_id: string;
+  kami_entity_id: string;
+  kami_index: number;
+  kami_name: string | null;
+  level: number;
+  state: string;
+  room_index: number | null;
+  room_name: string | null;
+  media_uri: string | null;
+  account_id: string;
+  affinities: any;
+  stats: any;
+  final_stats: any;
+  traits: any;
+  current_health?: number;
+  encrypted_private_key: string;
+  created_at: string;
+  updated_at: string;
+  last_synced: string;
+}
+
+export async function upsertKamigotchi(kamiData: {
+  userId: string;
+  operatorWalletId: string;
+  kamiEntityId: string;
+  kamiIndex: number;
+  kamiName: string | null;
+  level: number;
+  state: string;
+  roomIndex: number | null;
+  roomName: string | null;
+  mediaUri: string | null;
+  accountId: string;
+  affinities: any;
+  stats: any;
+  finalStats: any;
+  traits: any;
+  privateKey: string;
+  currentHealth?: number; // Added optional currentHealth
+}): Promise<Kamigotchi> {
+  const encryptedKey = encryptPrivateKey(kamiData.privateKey);
+
+  // Map final stats to columns
+  const finalStats = kamiData.finalStats || {};
+  const currentHealth = kamiData.currentHealth || 0;
+  
+  const statColumns = {
+    current_health: currentHealth,
+    stat_power: finalStats.power || 0,
+    stat_health: finalStats.health || 0,
+    stat_harmony: finalStats.harmony || 0,
+    stat_violence: finalStats.violence || 0,
+    mult_fertility: finalStats.fertilityMultiplier || 1.0,
+    mult_bounty: finalStats.bountyMultiplier || 1.0,
+    mult_metabolism: finalStats.metabolismMultiplier || 1.0,
+    mult_strain: finalStats.strainMultiplier || 1.0,
+    mult_defense_shift: finalStats.defenseShiftMultiplier || 1.0,
+    mult_defense_ratio: finalStats.defenseRatioMultiplier || 1.0,
+    mult_salvage_ratio: finalStats.salvageRatioMultiplier || 1.0,
+    mult_atk_spoils_ratio: finalStats.atkSpoilsRatioMultiplier || 1.0,
+    mult_atk_threshold_ratio: finalStats.atkThresholdRatioMultiplier || 1.0,
+    mult_atk_threshold_shift: finalStats.atkThresholdShiftMultiplier || 1.0,
+    boost_cooldown_shift: finalStats.cooldownShift || 0,
+    boost_intensity: finalStats.intensityBoost || 0
+  };
+
+  console.log(`[Supabase] Saving stats for Kami #${kamiData.kamiIndex}: Power=${statColumns.stat_power}, Health=${statColumns.stat_health}`);
+
+  const { data, error } = await supabase
+    .from('kamigotchis')
+    .upsert({
+      user_id: kamiData.userId,
+      operator_wallet_id: kamiData.operatorWalletId,
+      kami_entity_id: kamiData.kamiEntityId,
+      kami_index: kamiData.kamiIndex,
+      kami_name: kamiData.kamiName,
+      level: kamiData.level,
+      state: kamiData.state,
+      room_index: kamiData.roomIndex,
+      room_name: kamiData.roomName,
+      media_uri: kamiData.mediaUri,
+      account_id: kamiData.accountId,
+      affinities: kamiData.affinities,
+      stats: kamiData.stats,
+      final_stats: kamiData.finalStats,
+      traits: kamiData.traits,
+      encrypted_private_key: encryptedKey,
+      last_synced: new Date().toISOString(),
+      ...statColumns
+    }, {
+      onConflict: 'kami_entity_id'
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getKamigotchis(userId: string): Promise<Kamigotchi[]> {
+  const { data, error } = await supabase
+    .from('kamigotchis')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getKamigotchiById(kamiId: string): Promise<Kamigotchi | null> {
+  const { data, error } = await supabase
+    .from('kamigotchis')
+    .select('*')
+    .eq('id', kamiId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getKamigotchiByEntityId(entityId: string): Promise<Kamigotchi | null> {
+  const { data, error } = await supabase
+    .from('kamigotchis')
+    .select('*')
+    .eq('kami_entity_id', entityId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+    throw error;
+  }
+
+  return data;
+}
+
+export async function deleteKamigotchi(kamiId: string): Promise<void> {
+  const { error } = await supabase
+    .from('kamigotchis')
+    .delete()
+    .eq('id', kamiId);
+
+  if (error) throw error;
+}
+
+// Kami Profile (automation settings) operations
+export interface KamiProfile {
+  id: string;
+  kamigotchi_id: string;
+  operator_wallet_id: string;
+  auto_harvest_enabled: boolean;
+  harvest_node_index: number | null;
+  auto_collect_enabled: boolean;
+  auto_restart_enabled: boolean;
+  min_health_threshold: number;
+  auto_heal_enabled: boolean;
+  harvest_schedule_type: string;
+  harvest_start_time: string | null;
+  harvest_end_time: string | null;
+  harvest_duration: number;
+  rest_duration: number;
+  last_harvest_start: string | null;
+  last_collect: string | null;
+  is_currently_harvesting: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getOrCreateKamiProfile(kamigotchiId: string, operatorWalletId: string): Promise<KamiProfile> {
+  // Try to get existing profile
+  const { data: existing, error: selectError } = await supabase
+    .from('kami_profiles')
+    .select('*')
+    .eq('kamigotchi_id', kamigotchiId)
+    .single();
+
+  if (existing) return existing;
+
+  // Create new profile with defaults
+  const { data, error } = await supabase
+    .from('kami_profiles')
+    .insert({
+      kamigotchi_id: kamigotchiId,
+      operator_wallet_id: operatorWalletId,
+      auto_harvest_enabled: false,
+      harvest_node_index: null,
+      auto_collect_enabled: false,
+      auto_restart_enabled: false,
+      min_health_threshold: 20,
+      auto_heal_enabled: false,
+      harvest_schedule_type: 'continuous',
+      harvest_duration: 60,
+      rest_duration: 30,
+      is_currently_harvesting: false
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateKamiProfile(kamigotchiId: string, updates: Partial<KamiProfile>): Promise<KamiProfile> {
+  // First try to update
+  const { data, error } = await supabase
+    .from('kami_profiles')
+    .update(updates)
+    .eq('kamigotchi_id', kamigotchiId)
+    .select()
+    .maybeSingle(); // Use maybeSingle to avoid error if not found
+
+  if (data) return data;
+
+  // If not found, we need to create it. We need operator_wallet_id.
+  const kami = await getKamigotchiById(kamigotchiId);
+  if (!kami) throw new Error(`Kamigotchi ${kamigotchiId} not found, cannot create profile`);
+
+  const { data: newProfile, error: insertError } = await supabase
+    .from('kami_profiles')
+    .insert({
+      kamigotchi_id: kamigotchiId,
+      operator_wallet_id: kami.operator_wallet_id,
+      auto_harvest_enabled: false,
+      harvest_node_index: null,
+      auto_collect_enabled: false,
+      auto_restart_enabled: false,
+      min_health_threshold: 20,
+      auto_heal_enabled: false,
+      harvest_schedule_type: 'continuous',
+      harvest_duration: 60,
+      rest_duration: 30,
+      is_currently_harvesting: false,
+      ...updates // Apply the updates to the new profile
+    })
+    .select()
+    .single();
+
+  if (insertError) throw insertError;
+  return newProfile;
+}
+
+// System Logging
+export interface SystemLog {
+  id?: string;
+  user_id?: string; // Added for RLS
+  kami_profile_id?: string;
+  kami_index?: number;
+  action: string;
+  status: 'success' | 'error' | 'info' | 'warning';
+  message: string;
+  metadata?: any;
+  created_at?: string;
+}
+
+export async function logSystemEvent(event: SystemLog): Promise<void> {
+  // Console log for developers (following GEMINI.md format)
+  const category = `[${event.status === 'info' ? 'Info' : event.status === 'success' ? 'Success' : event.status === 'error' ? 'Error' : 'Warning'}]`;
+  console.log(`${category} ${event.action}: ${event.message}`);
+
+  // Database log for users
+  const { error } = await supabase.from('system_logs').insert({
+    user_id: event.user_id,
+    kami_profile_id: event.kami_profile_id, // can be null for system-wide events
+    kami_index: event.kami_index,
+    action: event.action,
+    status: event.status,
+    message: event.message,
+    metadata: event.metadata,
+    created_at: new Date().toISOString()
+  });
+
+  if (error) {
+    console.error('Failed to write system log:', error);
+  }
+
+  // Send Telegram notification if configured
+  if (event.user_id) {
+    try {
+      const user = await getUserByPrivyId(event.user_id);
+      if (user && user.telegram_chat_id) {
+        // Determine emoji based on status
+        let emoji = 'ℹ️';
+        if (event.status === 'success') emoji = '✅';
+        if (event.status === 'warning') emoji = '⚠️';
+        if (event.status === 'error') emoji = '🚨';
+
+        const message = `${emoji} *${event.action}*\n${event.message}`;
+        
+        // Use user's bot token if provided, otherwise default (handled by service)
+        await telegram.sendMessage(message, {
+          chatId: user.telegram_chat_id,
+          botToken: user.telegram_bot_token || undefined,
+          parseMode: 'Markdown'
+        });
+      }
+    } catch (err) {
+      console.error('Failed to send Telegram notification:', err);
+    }
+  }
+}
+
+export async function getSystemLogs(userId: string, limit: number = 50): Promise<SystemLog[]> {
+  const { data, error } = await supabase
+    .from('system_logs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export default supabase;

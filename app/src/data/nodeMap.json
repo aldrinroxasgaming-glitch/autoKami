@@ -1,0 +1,514 @@
+[
+  {
+    "nodeID": 1,
+    "name": "Eerie",
+    "affinity": "15",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 2,
+    "name": "Normal",
+    "affinity": "15",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 3,
+    "name": "Normal",
+    "affinity": "15",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 5,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 6,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 9,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 10,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 12,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 500,
+    "scavCost": null
+  },
+  {
+    "nodeID": 15,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 16,
+    "name": "",
+    "affinity": "1",
+    "levelLimit": 500,
+    "yieldIndex": null,
+    "scavCost": null
+  },
+  {
+    "nodeID": 18,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 19,
+    "name": "",
+    "affinity": "1",
+    "levelLimit": 300,
+    "yieldIndex": null,
+    "scavCost": null
+  },
+  {
+    "nodeID": 25,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 26,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 29,
+    "name": "Insect",
+    "affinity": "15",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 30,
+    "name": "Scrap",
+    "affinity": "15",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 31,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 32,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 33,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 34,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 35,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 36,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 37,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 47,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 48,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 49,
+    "name": "Clearing",
+    "affinity": "Normal",
+    "levelLimit": null,
+    "yieldIndex": 1,
+    "scavCost": 300
+  },
+  {
+    "nodeID": 50,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 51,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 52,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 53,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 55,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 56,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 57,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 58,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 59,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 60,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 500,
+    "scavCost": null
+  },
+  {
+    "nodeID": 61,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 62,
+    "name": "Centipedes",
+    "affinity": "Insect",
+    "levelLimit": null,
+    "yieldIndex": 2,
+    "scavCost": 300
+  },
+  {
+    "nodeID": 63,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 65,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 67,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 68,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 69,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 500,
+    "scavCost": null
+  },
+  {
+    "nodeID": 70,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 71,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 72,
+    "name": "",
+    "affinity": "1",
+    "levelLimit": 500,
+    "yieldIndex": null,
+    "scavCost": null
+  },
+  {
+    "nodeID": 73,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 74,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 75,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 76,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 500,
+    "scavCost": null
+  },
+  {
+    "nodeID": 77,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 78,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 79,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 80,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 81,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 82,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 500,
+    "scavCost": null
+  },
+  {
+    "nodeID": 83,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 100,
+    "scavCost": null
+  },
+  {
+    "nodeID": 84,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 85,
+    "name": "Normal",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  },
+  {
+    "nodeID": 86,
+    "name": "",
+    "affinity": "1",
+    "levelLimit": 500,
+    "yieldIndex": null,
+    "scavCost": null
+  },
+  {
+    "nodeID": 87,
+    "name": "Sacrarium",
+    "affinity": "Eerie",
+    "levelLimit": null,
+    "yieldIndex": 1,
+    "scavCost": 300
+  },
+  {
+    "nodeID": 88,
+    "name": "Scrap",
+    "affinity": "",
+    "levelLimit": 2,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 89,
+    "name": "Insect",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 300,
+    "scavCost": null
+  },
+  {
+    "nodeID": 90,
+    "name": "Eerie",
+    "affinity": "",
+    "levelLimit": 1,
+    "yieldIndex": 200,
+    "scavCost": null
+  }
+]

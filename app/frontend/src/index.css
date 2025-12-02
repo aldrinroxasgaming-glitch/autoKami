@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Dogica Pixel';
+  src: url('./assets/fonts/dogicapixel.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+    font-family: 'Dogica Pixel', monospace;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0a0a0a; /* dark-bg */
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
