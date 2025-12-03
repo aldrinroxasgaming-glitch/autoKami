@@ -150,11 +150,18 @@ const CharacterCard = memo(({
   }
 
   if (isSelected) {
-    cardClasses += `ring-inset ${theme.highlight} `;
+    cardClasses += `ring-inset ${theme.highlight} shadow-xl transform scale-[1.02] z-30 `;
   }
 
   return (
     <div onClick={onClick} className={cardClasses}>
+      {/* Selected Indicator */}
+      {isSelected && (
+        <div className="absolute top-0 left-0 bg-yellow-400 text-black text-[0.6rem] font-bold px-1.5 py-0.5 rounded-br z-30 border-b-2 border-r-2 border-yellow-600 shadow-sm">
+          SELECTED
+        </div>
+      )}
+
       {/* Automation indicator */}
       {isAutomationActive && !isDead && (
         <div className="absolute inset-0 border-4 border-green-500 bg-green-400/10 z-20 pointer-events-none rounded">
@@ -251,38 +258,6 @@ const CharacterDetails = memo(({ char, theme, onToggleAutomation, onOpenSettings
         {char.running ? '● Running' : '○ Stopped'}
       </div>
     </div>
-
-    {/* Start/Stop button */}
-    <button
-      onClick={() => onToggleAutomation(char.id)}
-      className={`
-        w-full py-3 px-4 ${theme.button} flex items-center justify-center gap-2 text-white mb-2
-        ${char.running 
-          ? 'bg-red-500 hover:bg-red-600 border-red-700' 
-          : 'bg-green-500 hover:bg-green-600 border-green-700'}
-      `}
-    >
-      {char.running ? (
-        <>
-          <Square className="w-5 h-5" fill="white" />
-          STOP
-        </>
-      ) : (
-        <>
-          <Play className="w-5 h-5" fill="white" />
-          START
-        </>
-      )}
-    </button>
-
-    {/* Settings button */}
-    <button
-      onClick={onOpenSettings}
-      className={`w-full py-3 px-4 ${theme.button} flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white`}
-    >
-      <Settings className="w-5 h-5" />
-      SETTINGS
-    </button>
   </>
 ));
 
@@ -735,9 +710,8 @@ const CharacterManagerPWA = () => {
                       currentTheme={currentTheme}
                       onClick={() => {
                         setSelectedChar(char);
-                        if (window.innerWidth < 1024) {
-                          setIsMobileDetailsOpen(true);
-                        }
+                        // Mobile modal removed as requested
+                        // if (window.innerWidth < 1024) { setIsMobileDetailsOpen(true); }
                       }}
                     />
                   ))
@@ -823,30 +797,8 @@ const CharacterManagerPWA = () => {
         </div>
       </div>
 
-      {/* Mobile Character Details Modal */}
-      {isMobileDetailsOpen && selectedChar && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-40 p-4 lg:hidden font-mono">
-          <div className={`${theme.modal} w-full max-w-md overflow-hidden shadow-2xl max-h-[90vh] overflow-y-auto`}>
-            <div className="p-4 border-b-4 border-gray-700 flex justify-between items-center bg-gray-800">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                CHARACTER DETAILS
-              </h2>
-              <button onClick={() => setIsMobileDetailsOpen(false)} className="text-gray-400 hover:text-white">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="p-4">
-              <CharacterDetails 
-                char={selectedChar} 
-                theme={theme} 
-                onToggleAutomation={toggleAutomation}
-                onOpenSettings={() => setIsSettingsModalOpen(true)}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Mobile Character Details Modal Removed */}
+      
       {/* Settings Modal */}
       {isSettingsModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 font-mono">
