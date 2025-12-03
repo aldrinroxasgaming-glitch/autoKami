@@ -1,7 +1,25 @@
 import { Router } from 'express';
 import { getKamisByAccountId, getAccountByAddress, getAccountById } from '../services/accountService.js';
+import { getAccountStamina } from '../services/automationService.js';
 
 const router = Router();
+
+/**
+ * GET /api/account/:accountId/stamina
+ * Get current stamina for an account
+ */
+router.get('/:accountId/stamina', async (req, res) => {
+  try {
+    const accountId = req.params.accountId;
+    const stamina = await getAccountStamina(accountId);
+    res.json({ stamina });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to retrieve stamina',
+      message: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
 
 /**
  * GET /api/account/address/:address

@@ -499,6 +499,88 @@ export async function logSystemEvent(event: SystemLog): Promise<void> {
   }
 }
 
+// Auto Crafting Settings
+export interface AutoCraftingSettings {
+  id?: string;
+  operator_wallet_id: string;
+  is_enabled: boolean;
+  recipe_id: number;
+  amount_to_craft: number;
+  interval_minutes: number;
+  last_run_at?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function getAutoCraftingSettings(operatorWalletId: string): Promise<AutoCraftingSettings | null> {
+  const { data, error } = await supabase
+    .from('auto_crafting_settings')
+    .select('*')
+    .eq('operator_wallet_id', operatorWalletId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('[Supabase] Error fetching auto crafting settings:', error);
+    return null;
+  }
+  return data;
+}
+
+export async function upsertAutoCraftingSettings(settings: AutoCraftingSettings): Promise<boolean> {
+  // Check for existing setting for this wallet to ensure we update it
+  const existing = await getAutoCraftingSettings(settings.operator_wallet_id);
+  
+  const payload = {
+    ...settings,
+    updated_at: new Date().toISOString()
+  };
+
+  if (existing) {
+    // Update
+    const { error } = await supabase
+      .from('auto_crafting_settings')
+      .update(payload)
+      .eq('id', existing.id);
+      
+    if (error) {
+        console.error('[Supabase] Error updating crafting settings:', error);
+        return false;
+    }
+  } else {
+    // Insert
+    const { error } = await supabase
+      .from('auto_crafting_settings')
+      .insert(payload);
+
+    if (error) {
+        console.error('[Supabase] Error inserting crafting settings:', error);
+        return false;
+    }
+  }
+  return true;
+}
+
+export async function getAllActiveCraftingSettings(): Promise<(AutoCraftingSettings & { operator_wallets: OperatorWallet })[]> {
+  const { data, error } = await supabase
+    .from('auto_crafting_settings')
+    .select('*, operator_wallets(*)')
+    .eq('is_enabled', true);
+
+  if (error) {
+    console.error('[Supabase] Error fetching active crafting settings:', error);
+    return [];
+  }
+  // The join returns operator_wallets as a single object because of the FK relationship
+  return data as any;
+}
+
+export async function updateCraftingLastRun(id: string): Promise<void> {
+  await supabase
+    .from('auto_crafting_settings')
+    .update({ last_run_at: new Date().toISOString() })
+    .eq('id', id);
+}
+
 export async function getSystemLogs(userId: string, limit: number = 50): Promise<SystemLog[]> {
   const { data, error } = await supabase
     .from('system_logs')

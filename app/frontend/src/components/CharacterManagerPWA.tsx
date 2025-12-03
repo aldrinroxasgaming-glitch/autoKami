@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
-import { Play, Square, Settings, Trash2, ChevronLeft, ChevronRight, RefreshCw, X, Save, Plus, Send, LogOut } from 'lucide-react';
+import { Play, Square, Settings, Trash2, ChevronLeft, ChevronRight, RefreshCw, X, Save, Plus, Send, LogOut, Hammer } from 'lucide-react';
 import { usePrivy } from '@privy-io/react-auth';
+import { RECIPE_LIST } from '../assets/recipeList';
 import { 
   refreshKamigotchis, 
   getProfiles, 
@@ -12,7 +13,8 @@ import {
   addProfile,
   updateTelegramSettings,
   getUserSettings,
-  sendTestTelegramMessage
+  sendTestTelegramMessage,
+  getAccountStamina
 } from '../services/api';
 import { NODE_LIST } from '../assets/nodeList';
 import { getBackgroundList } from '../assets/backgrounds';
@@ -310,6 +312,7 @@ const CharacterManagerPWA = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
+  const [isCraftingModalOpen, setIsCraftingModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isMobileDetailsOpen, setIsMobileDetailsOpen] = useState(false);
   const [configKami, setConfigKami] = useState<Kami | null>(null);
@@ -322,6 +325,22 @@ const CharacterManagerPWA = () => {
   // Form State
   const [newProfile, setNewProfile] = useState({ name: '', address: '', privateKey: '' });
   const [telegramConfig, setTelegramConfig] = useState({ botToken: '', chatId: '' });
+  const [craftingProfileStamina, setCraftingProfileStamina] = useState<number | null>(null);
+
+  // Fetch stamina when crafting modal opens
+  useEffect(() => {
+    if (isCraftingModalOpen && configKami) {
+      const profile = profiles.find(p => p.id === configKami.operator_wallet_id);
+      if (profile?.accountId) {
+        setCraftingProfileStamina(null); // Reset while fetching
+        getAccountStamina(profile.accountId)
+          .then(s => setCraftingProfileStamina(s))
+          .catch(err => console.error('Failed to fetch stamina', err));
+      } else {
+        setCraftingProfileStamina(null);
+      }
+    }
+  }, [isCraftingModalOpen, configKami, profiles]);
 
   // Load backgrounds on mount
   useEffect(() => {
@@ -524,6 +543,14 @@ const CharacterManagerPWA = () => {
     }
   }, [selectedChar]);
 
+  // Open crafting modal
+  const openCraftingModal = useCallback(() => {
+    if (selectedChar) {
+      setConfigKami(selectedChar);
+      setIsCraftingModalOpen(true);
+    }
+  }, [selectedChar]);
+
   // Save config changes
   const handleSaveConfig = useCallback(async (settings: Partial<AutomationSettings>) => {
     if (!configKami) return;
@@ -531,7 +558,21 @@ const CharacterManagerPWA = () => {
     try {
       const { success } = await updateAutomation(configKami.id, settings);
       if (success) {
-        addLog(`Configuration updated for ${configKami.name}`, 'success');
+        const profile = profiles.find(p => p.id === configKami.operator_wallet_id);
+        const profileName = profile?.name || 'Unknown Profile';
+        
+        let staminaMsg = '';
+        if (profile?.accountId) {
+            try {
+                const stamina = await getAccountStamina(profile.accountId);
+                staminaMsg = ` : ${stamina}`;
+            } catch (e) {
+                console.error('Failed to fetch stamina for log', e);
+            }
+        }
+
+        addLog(`${profileName}${staminaMsg}`, 'success');
+        
         setCharacters(chars => chars.map(c => 
           c.id === configKami.id ? { ...c, automation: { ...c.automation, ...settings } } : c
         ));
@@ -539,6 +580,7 @@ const CharacterManagerPWA = () => {
           setSelectedChar(prev => prev ? { ...prev, automation: { ...prev.automation, ...settings } } : null);
         }
         setIsConfigModalOpen(false);
+        setIsCraftingModalOpen(false);
       } else {
         addLog('Failed to update configuration', 'error');
       }
@@ -730,6 +772,13 @@ const CharacterManagerPWA = () => {
                 >
                   <Settings className="w-5 h-5" />
                   <span className="hidden sm:inline">CONFIG</span>
+                </button>
+                <button
+                  onClick={openCraftingModal}
+                  className={`flex-1 py-3 px-2 flex items-center justify-center gap-2 ${theme.button} ${currentTheme === 'arcade' ? 'bg-white hover:bg-yellow-100' : 'bg-white/80 hover:bg-white'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <Hammer className="w-5 h-5" />
+                  <span className="hidden sm:inline">CRAFTING</span>
                 </button>
                 <button
                   disabled={isRefreshing}
@@ -1109,6 +1158,144 @@ const CharacterManagerPWA = () => {
               <button 
                 onClick={() => handleSaveConfig(configKami.automation)}
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded font-bold flex items-center gap-2 shadow-lg shadow-green-500/20"
+              >
+                <Save className="w-4 h-4" />
+                SAVE CONFIG
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Crafting Modal */}
+      {isCraftingModalOpen && configKami && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 font-mono">
+          <div className={`${theme.modal} w-full max-w-md text-white overflow-hidden shadow-2xl`}>
+            <div className="bg-gray-800 p-4 border-b-4 border-gray-700 flex justify-between items-start">
+              <div>
+                <h2 className="text-xl font-bold text-yellow-400">CRAFTING CONFIG</h2>
+                <div className="text-sm text-gray-400 mt-1">
+                  {(() => {
+                    const profile = profiles.find(p => p.id === configKami.operator_wallet_id);
+                    const name = profile?.name || 'Unknown Profile';
+                    const stamina = craftingProfileStamina !== null ? craftingProfileStamina : '...';
+                    return `${name} (Stamina: ${stamina})`;
+                  })()}
+                </div>
+              </div>
+              <button onClick={() => setIsCraftingModalOpen(false)} className="text-gray-400 hover:text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Toggle */}
+              <label className="flex items-center gap-3 cursor-pointer group">
+                <div className="relative">
+                  <input 
+                    type="checkbox" 
+                    className="peer sr-only"
+                    checked={configKami.automation?.autoCraftEnabled || false}
+                    onChange={(e) => setConfigKami({
+                      ...configKami,
+                      automation: { ...configKami.automation, autoCraftEnabled: e.target.checked }
+                    })}
+                  />
+                  <div className="w-10 h-6 bg-gray-700 rounded-full border-2 border-gray-600 peer-checked:bg-yellow-500 peer-checked:border-yellow-400 transition-all"></div>
+                  <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-4"></div>
+                </div>
+                <span className="font-bold text-white group-hover:text-yellow-400 transition-colors">Enable Auto-Crafting</span>
+              </label>
+
+              {/* Recipe Selection */}
+              <div>
+                <label className="block text-sm font-bold text-blue-400 mb-2 uppercase">Recipe</label>
+                <select 
+                  className="w-full bg-gray-800 border-2 border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none"
+                  value={configKami.automation?.craftingRecipeId || ''}
+                  onChange={(e) => setConfigKami({
+                    ...configKami,
+                    automation: { ...configKami.automation, craftingRecipeId: parseInt(e.target.value) }
+                  })}
+                >
+                  <option value="">Select Recipe</option>
+                  {RECIPE_LIST.map(recipe => (
+                    <option key={recipe.id} value={recipe.id}>
+                      #{recipe.id} {recipe.name} (Cost: {recipe.staminaCost})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Parameters */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-purple-400 mb-2 uppercase">Amount</label>
+                  <input 
+                    type="number" 
+                    min="1"
+                    className="w-full bg-gray-800 border-2 border-gray-600 rounded p-2 text-white focus:border-purple-500 outline-none"
+                    value={configKami.automation?.craftingAmount || 1}
+                    onChange={(e) => {
+                      const amt = parseInt(e.target.value) || 1;
+                      setConfigKami({
+                        ...configKami,
+                        automation: { ...configKami.automation, craftingAmount: amt }
+                      });
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-green-400 mb-2 uppercase">Interval</label>
+                  <input 
+                    type="number" 
+                    min="1"
+                    className="w-full bg-gray-800 border-2 border-gray-600 rounded p-2 text-white focus:border-green-500 outline-none"
+                    value={configKami.automation?.craftingInterval || 10}
+                    onChange={(e) => setConfigKami({
+                      ...configKami,
+                      automation: { ...configKami.automation, craftingInterval: parseInt(e.target.value) }
+                    })}
+                  />
+                  <div className="text-xs text-gray-500 mt-1">(MINS)</div>
+                </div>
+              </div>
+
+              {/* Validation Feedback */}
+              {(() => {
+                const recipe = RECIPE_LIST.find(r => r.id === configKami.automation?.craftingRecipeId);
+                const amt = configKami.automation?.craftingAmount || 0;
+                if (recipe) {
+                  const totalCost = recipe.staminaCost * amt;
+                  if (totalCost > 100) {
+                    return (
+                      <div className="bg-red-900/50 border border-red-500 p-2 rounded text-red-200 text-xs flex items-center gap-2">
+                        <X className="w-4 h-4" />
+                        Total Cost ({totalCost}) exceeds max stamina (100). Automation will fail.
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="bg-gray-900/50 border border-gray-600 p-2 rounded text-gray-400 text-xs">
+                      Total Cost: {totalCost} Stamina per run.
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
+            </div>
+
+            <div className="bg-gray-800 p-4 border-t-4 border-gray-700 flex justify-end gap-3">
+              <button 
+                onClick={() => setIsCraftingModalOpen(false)}
+                className="px-4 py-2 text-gray-400 hover:text-white font-bold"
+              >
+                CANCEL
+              </button>
+              <button 
+                onClick={() => handleSaveConfig(configKami.automation)}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded font-bold flex items-center gap-2 shadow-lg shadow-yellow-500/20"
               >
                 <Save className="w-4 h-4" />
                 SAVE CONFIG

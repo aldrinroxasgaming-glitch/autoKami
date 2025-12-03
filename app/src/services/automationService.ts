@@ -1,24 +1,136 @@
+import { ethers } from 'ethers';
 import {
     getKamigotchis,
     getOrCreateKamiProfile,
     updateKamiProfile,
     logSystemEvent,
-    decryptPrivateKey
+    decryptPrivateKey,
+    getAllActiveCraftingSettings,
+    updateCraftingLastRun,
+    AutoCraftingSettings
 } from './supabaseService.js';
 import { startHarvest, stopHarvestByKamiId, getKamiState } from './harvestService.js';
-import { getKamiByIndex } from './kamiService.js';
+import { craftRecipe } from './craftingService.js';
+import { loadAbi, loadIds } from '../utils/contractLoader.js';
 import supabase from './supabaseService.js';
+import { RECIPE_LIST } from '../utils/recipes.js';
 
 const POLL_INTERVAL_MS = 60000; // Check every 60 seconds
+
+// Provider Setup for Stamina Checks
+const RPC_URL = process.env.RPC_URL || 'https://archival-jsonrpc-yominet-1.anvil.asia-southeast.initia.xyz';
+const GETTER_SYSTEM_ADDRESS = process.env.GETTER_SYSTEM_ADDRESS || '0x12C0989A259471D89D1bA1BB95043D64DAF97c19';
+const provider = new ethers.JsonRpcProvider(RPC_URL);
+const GetterSystemABI = [
+    "function getAccount(uint256 id) view returns (tuple(uint32 index, string name, int32 currStamina, uint32 room))"
+];
+const getterContract = new ethers.Contract(GETTER_SYSTEM_ADDRESS, GetterSystemABI, provider);
 
 export async function runAutomationLoop() {
     console.log('🔄 Starting Automation Loop...');
     
     // Initial run
     await processAutomation();
+    await processCraftingAutomation();
 
     // Loop
-    setInterval(processAutomation, POLL_INTERVAL_MS);
+    setInterval(async () => {
+        // We poll every minute to check if any intervals have passed
+        // The actual execution frequency is controlled by each profile's 'interval_minutes' setting
+        await processAutomation();
+        await processCraftingAutomation();
+    }, POLL_INTERVAL_MS);
+}
+
+export async function getAccountStamina(accountId: string): Promise<number> {
+    try {
+        const account = await getterContract.getAccount(BigInt(accountId));
+        return Number(account.currStamina);
+    } catch (e) {
+        console.error(`[Automation] Failed to fetch stamina for ${accountId}:`, e);
+        return 0;
+    }
+}
+
+export async function processCraftingAutomation() {
+    try {
+        const settingsList = await getAllActiveCraftingSettings();
+        if (settingsList.length === 0) return;
+
+        // console.log(`[Automation] Processing ${settingsList.length} crafting tasks...`);
+
+        for (const setting of settingsList) {
+            const wallet = setting.operator_wallets;
+            const lastRun = setting.last_run_at ? new Date(setting.last_run_at) : new Date(0);
+            const now = new Date();
+            const elapsedMinutes = (now.getTime() - lastRun.getTime()) / 60000;
+
+            if (elapsedMinutes >= setting.interval_minutes) {
+                // Check Stamina
+                const stamina = await getAccountStamina(wallet.account_id);
+                
+                // Calculate required stamina
+                const recipe = RECIPE_LIST.find(r => r.id === setting.recipe_id);
+                if (!recipe) {
+                    console.error(`[Crafting] Recipe #${setting.recipe_id} not found.`);
+                    continue;
+                }
+                const requiredStamina = recipe.staminaCost * setting.amount_to_craft;
+
+                if (stamina >= requiredStamina) {
+                    console.log(`[Crafting] Wallet ${wallet.name}: Stamina ${stamina} >= ${requiredStamina}. Crafting...`);
+                    
+                    let privateKey;
+                    try {
+                        privateKey = decryptPrivateKey(wallet.encrypted_private_key);
+                    } catch (e) {
+                        console.error(`[Crafting] Decryption failed for ${wallet.name}`);
+                        continue;
+                    }
+
+                    const result = await craftRecipe(setting.recipe_id, setting.amount_to_craft, privateKey);
+                    
+                    // Always update last_run_at to prevent spamming, even on failure
+                    // User requested: "run the craft function after the interval... so that it will not keep spamming"
+                    await updateCraftingLastRun(setting.id!);
+
+                    if (result.success) {
+                        await logSystemEvent({
+                            user_id: wallet.user_id,
+                            action: 'auto_craft',
+                            status: 'success',
+                            message: `Auto-crafted ${recipe.name} (x${setting.amount_to_craft}) for ${wallet.name}. Consumed ${requiredStamina} Stamina.`,
+                            metadata: { txHash: result.txHash, recipeId: setting.recipe_id, amount: setting.amount_to_craft, cost: requiredStamina }
+                        });
+                    } else {
+                        await logSystemEvent({
+                            user_id: wallet.user_id,
+                            action: 'auto_craft_fail',
+                            status: 'error',
+                            message: `Auto-craft failed: ${result.error}. Will retry in ${setting.interval_minutes} mins.`,
+                            metadata: { error: result.error }
+                        });
+                    }
+                } else {
+                    // Stamina not enough
+                    console.log(`[Crafting] Wallet ${wallet.name}: Stamina ${stamina} < ${requiredStamina}. insufficient stamina, waiting for the next interval.`);
+                    
+                    await logSystemEvent({
+                        user_id: wallet.user_id,
+                        action: 'auto_craft_skip',
+                        status: 'warning',
+                        message: `Insufficient Stamina (${stamina}/${requiredStamina}) for ${recipe.name}. Skipping and waiting ${setting.interval_minutes} mins.`,
+                        metadata: { stamina, required: requiredStamina, recipe: recipe.name }
+                    });
+
+                    // Update last_run_at so we wait for the full interval before checking again
+                    await updateCraftingLastRun(setting.id!);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('[Automation] Crafting loop error:', error);
+    }
 }
 
 async function processAutomation() {
@@ -32,7 +144,7 @@ async function processAutomation() {
         if (error) throw error;
         if (!profiles || profiles.length === 0) return;
 
-        console.log(`[Automation] Processing ${profiles.length} active profiles...`);
+        // console.log(`[Automation] Processing ${profiles.length} active profiles...`);
 
         for (const profile of profiles) {
             const kami = profile.kamigotchis; // Joined data

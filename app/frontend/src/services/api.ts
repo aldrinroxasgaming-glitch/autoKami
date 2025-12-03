@@ -167,14 +167,17 @@ export const deleteProfile = async (profileId: string): Promise<{ success: boole
 
 // Kamigotchi API
 export interface AutomationSettings {
-  autoHarvestEnabled: boolean;
-  harvestNodeIndex: number | null;
-  autoCollectEnabled: boolean;
-  autoRestartEnabled: boolean;
-  minHealthThreshold: number;
+  isCurrentlyHarvesting: boolean;
+  harvestNodeIndex: number;
   harvestDuration: number;
   restDuration: number;
-  isCurrentlyHarvesting: boolean;
+  autoRestartEnabled: boolean;
+  autoCollectEnabled: boolean;
+  autoHarvestEnabled: boolean;
+  autoCraftEnabled?: boolean;
+  craftingRecipeId?: number | null;
+  craftingAmount?: number;
+  craftingInterval?: number;
 }
 
 export interface KamigotchiData {
@@ -281,6 +284,11 @@ export interface UserSettings {
 export const getUserSettings = async (privyUserId: string): Promise<{ user: UserSettings }> => {
   const response = await api.get('/system/user', { params: { privyUserId } });
   return response.data;
+};
+
+export const getAccountStamina = async (accountId: string): Promise<number> => {
+  const response = await api.get(`/account/${accountId}/stamina`);
+  return response.data.stamina;
 };
 
 export default api;
