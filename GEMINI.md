@@ -349,6 +349,22 @@ return timers.map(timer => (
 
 ## Tech Stack & Architecture
 
+### Scalability & Concurrency Strategy
+
+**Goal**: Support up to **60+ active Kamis** running automation concurrently.
+
+**Challenge**: 
+- **Nonce Management**: Multiple transactions from the same wallet (e.g. 5 Kamis on one account) cannot be submitted simultaneously without nonce collisions ("account sequence mismatch").
+- **Performance**: Processing 60 Kamis sequentially in a single loop would be too slow (e.g., if one tx takes 10s, the loop takes 10 minutes).
+
+**Solution Architecture**:
+1.  **Parallel Automation Logic**: The automation loop processes all active profiles *concurrently* (using `Promise.allSettled`). This means checks for Kami #1 and Kami #60 happen at the same time.
+2.  **Serialized Transactions (Mutex)**: Critical on-chain operations (`harvest`, `craft`, `move`) are wrapped in a `WalletMutex`. This utility queues transactions *per wallet address*.
+    - **Different Wallets**: Run completely in parallel.
+    - **Same Wallet**: Transactions are executed one-by-one to ensure correct nonce usage.
+
+**Result**: High throughput for the system while maintaining on-chain reliability for individual wallets.
+
 ### Data Flow Strategy (CRITICAL)
 
 **Supabase-First Approach**:

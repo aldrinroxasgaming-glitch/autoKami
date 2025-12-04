@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { loadAbi, loadIds } from '../utils/contractLoader.js';
 import { getSystemAddress } from './transactionService.js';
+import { walletMutex } from '../utils/walletMutex.js';
 
 // Load ABIs and Config dynamically
 const CraftSystem = loadAbi('CraftSystem.json');
@@ -22,59 +23,61 @@ export async function craftRecipe(
   amount: number, 
   privateKey: string
 ): Promise<CraftResult> {
-  try {
-    const wallet = new ethers.Wallet(privateKey, provider);
-    
-    // Use encodedID (0x...) which getSystemAddress handles
-    const systemId = SYSTEMS.CraftSystem.encodedID;
-    const systemAddress = await getSystemAddress(systemId);
-    
-    // Use Raw Transaction Construction to match known-working script
-    // Selector for craft(uint32,uint256): 0x5c817c70
-    const selector = "0x5c817c70";
-    const arg1 = recipeIndex.toString(16).padStart(64, '0');
-    const arg2 = amount.toString(16).padStart(64, '0');
-    const data = selector + arg1 + arg2;
+  const wallet = new ethers.Wallet(privateKey, provider);
 
-    console.log(`[Crafting] Crafting Recipe #${recipeIndex} (x${amount})`);
-    console.log(`[Crafting] Target: ${systemAddress}`);
-    // console.log(`[Crafting] Data: ${data}`);
-
-    // Fix for "account sequence mismatch": Explicitly fetch the pending nonce
-    const nonce = await provider.getTransactionCount(wallet.address, 'pending');
-    console.log(`[Crafting] Using nonce: ${nonce}`);
-
-    const tx = await wallet.sendTransaction({
-        to: systemAddress,
-        data: data,
-        gasLimit: 3000000,
-        nonce: nonce
-    });
-
-    console.log(`[Crafting] Tx submitted: ${tx.hash}`);
-    
+  return walletMutex.runExclusive(wallet.address, async () => {
     try {
-        const receipt = await tx.wait();
-        if (receipt && receipt.status === 1) {
-            return { success: true, txHash: tx.hash };
-        } else {
-            return { success: false, error: 'Transaction reverted' };
-        }
-    } catch (waitError: any) {
-        if (waitError.code === 'TRANSACTION_REPLACED') {
-            if (waitError.cancelled) {
-                return { success: false, error: 'Transaction cancelled' };
+        // Use encodedID (0x...) which getSystemAddress handles
+        const systemId = SYSTEMS.CraftSystem.encodedID;
+        const systemAddress = await getSystemAddress(systemId);
+        
+        // Use Raw Transaction Construction to match known-working script
+        // Selector for craft(uint32,uint256): 0x5c817c70
+        const selector = "0x5c817c70";
+        const arg1 = recipeIndex.toString(16).padStart(64, '0');
+        const arg2 = amount.toString(16).padStart(64, '0');
+        const data = selector + arg1 + arg2;
+
+        console.log(`[Crafting] Crafting Recipe #${recipeIndex} (x${amount})`);
+        console.log(`[Crafting] Target: ${systemAddress}`);
+        // console.log(`[Crafting] Data: ${data}`);
+
+        // Fix for "account sequence mismatch": Explicitly fetch the pending nonce
+        const nonce = await provider.getTransactionCount(wallet.address, 'pending');
+        console.log(`[Crafting] Using nonce: ${nonce}`);
+
+        const tx = await wallet.sendTransaction({
+            to: systemAddress,
+            data: data,
+            gasLimit: 3000000,
+            nonce: nonce
+        });
+
+        console.log(`[Crafting] Tx submitted: ${tx.hash}`);
+        
+        try {
+            const receipt = await tx.wait();
+            if (receipt && receipt.status === 1) {
+                return { success: true, txHash: tx.hash };
+            } else {
+                return { success: false, error: 'Transaction reverted' };
             }
-            if (waitError.receipt && waitError.receipt.status === 1) {
-                console.log(`[Crafting] Transaction replaced but succeeded: ${waitError.receipt.hash}`);
-                return { success: true, txHash: waitError.receipt.hash };
+        } catch (waitError: any) {
+            if (waitError.code === 'TRANSACTION_REPLACED') {
+                if (waitError.cancelled) {
+                    return { success: false, error: 'Transaction cancelled' };
+                }
+                if (waitError.receipt && waitError.receipt.status === 1) {
+                    console.log(`[Crafting] Transaction replaced but succeeded: ${waitError.receipt.hash}`);
+                    return { success: true, txHash: waitError.receipt.hash };
+                }
+                return { success: false, error: 'Transaction replaced and reverted' };
             }
-            return { success: false, error: 'Transaction replaced and reverted' };
+            throw waitError;
         }
-        throw waitError;
+    } catch (error: any) {
+        console.error('[Crafting] Execution failed:', error);
+        return { success: false, error: error.message };
     }
-  } catch (error: any) {
-    console.error('[Crafting] Execution failed:', error);
-    return { success: false, error: error.message };
-  }
+  });
 }

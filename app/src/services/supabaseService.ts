@@ -534,7 +534,39 @@ export async function logSystemEvent(event: SystemLog): Promise<void> {
         if (event.status === 'warning') emoji = '⚠️';
         if (event.status === 'error') emoji = '🚨';
 
-        const message = `${emoji} *${event.action}*\n${event.message}`;
+        let formattedMessage = event.message;
+
+        // Clean up verbose Ethers errors
+        if (event.status === 'error') {
+            if (formattedMessage.includes('transaction execution reverted')) {
+                if (formattedMessage.includes('code=CALLEXCEPTION')) {
+                    formattedMessage = 'Transaction reverted by contract.\nPossible causes: Wrong Room, Cooldown active, or Not Owner.';
+                } else if (formattedMessage.includes('INSUFFICIENT_FUNDS')) {
+                    formattedMessage = 'Transaction failed: Insufficient funds for gas.';
+                } else {
+                    // Strip the verbose error object
+                    formattedMessage = formattedMessage.split('(')[0].trim() || 'Transaction execution reverted.';
+                }
+            } else if (formattedMessage.includes('user rejected')) {
+                formattedMessage = 'Transaction rejected by user.';
+            }
+        }
+
+        let message = `${emoji} *${event.action}*\n${formattedMessage}`;
+        
+        // Append Metadata
+        if (event.metadata) {
+            const meta = event.metadata;
+            const details = [];
+            if (meta.txHash) details.push(`🔗 Tx: \`${meta.txHash.substring(0, 10)}...\``);
+            if (meta.harvestId) details.push(`🆔 Harvest ID: \`${meta.harvestId}\``);
+            if (meta.nodeIndex !== undefined) details.push(`📍 Node: #${meta.nodeIndex}`);
+            if (meta.currentHealth !== undefined) details.push(`❤️ Health: ${meta.currentHealth}`);
+            
+            if (details.length > 0) {
+                message += `\n\n${details.join('\n')}`;
+            }
+        }
         
         // Use user's bot token if provided, otherwise default (handled by service)
         await telegram.sendMessage(message, {

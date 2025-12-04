@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { loadAbi, loadIds } from '../utils/contractLoader.js';
 import { getSystemAddress } from './transactionService.js';
 import supabase from './supabaseService.js';
+import { walletMutex } from '../utils/walletMutex.js';
 
 // Load ABIs and Config dynamically
 const HarvestStartSystem = loadAbi('HarvestStartSystem.json');
@@ -36,43 +37,45 @@ export interface HarvestResult {
 }
 
 export async function startHarvest(params: HarvestParams): Promise<HarvestResult> {
-  try {
-    const { kamiId, nodeIndex, privateKey } = params;
-    const wallet = new ethers.Wallet(privateKey, provider);
-    
-    const systemId = SYSTEMS.HarvestStartSystem.encodedID;
-    const systemAddress = await getSystemAddress(systemId);
-    const contract = new ethers.Contract(systemAddress, HarvestStartSystem.abi, wallet);
+  const { kamiId, nodeIndex, privateKey } = params;
+  const wallet = new ethers.Wallet(privateKey, provider);
 
-    console.log(`[Harvest] 🚀 Initiating startHarvest for Kami #${kamiId}`);
-    console.log(`[Harvest] 📝 Params: Node=${nodeIndex}, Taxer=0, Tax=0`);
-    console.log(`[Harvest] 🔧 Contract: ${systemAddress} (HarvestStartSystem)`);
-    
-    // Execute
-    // executeTyped(uint256 kamiID, uint32 nodeIndex, uint256 taxerID, uint256 taxAmt)
-    const tx = await contract.executeTyped(BigInt(kamiId), BigInt(nodeIndex), BigInt(0), BigInt(0), { gasLimit: 2000000 });
-    console.log(`[Harvest] ⏳ Tx submitted: ${tx.hash}. Waiting for confirmation...`);
-    
-    const receipt = await tx.wait();
-    if (receipt.status === 1) {
-        console.log(`[Harvest] ✅ Tx confirmed in block ${receipt.blockNumber}`);
-        const harvestId = getHarvestIdFromReceipt(receipt);
+  return walletMutex.runExclusive(wallet.address, async () => {
+    try {
+        const systemId = SYSTEMS.HarvestStartSystem.encodedID;
+        const systemAddress = await getSystemAddress(systemId);
+        const contract = new ethers.Contract(systemAddress, HarvestStartSystem.abi, wallet);
+
+        console.log(`[Harvest] 🚀 Initiating startHarvest for Kami #${kamiId}`);
+        console.log(`[Harvest] 📝 Params: Node=${nodeIndex}, Taxer=0, Tax=0`);
+        console.log(`[Harvest] 🔧 Contract: ${systemAddress} (HarvestStartSystem)`);
         
-        if (harvestId) {
-            console.log(`[Harvest] 🌾 Harvest started successfully with ID: ${harvestId}`);
-            return { success: true, txHash: tx.hash, harvestId };
+        // Execute
+        // executeTyped(uint256 kamiID, uint32 nodeIndex, uint256 taxerID, uint256 taxAmt)
+        const tx = await contract.executeTyped(BigInt(kamiId), BigInt(nodeIndex), BigInt(0), BigInt(0), { gasLimit: 2000000 });
+        console.log(`[Harvest] ⏳ Tx submitted: ${tx.hash}. Waiting for confirmation...`);
+        
+        const receipt = await tx.wait();
+        if (receipt.status === 1) {
+            console.log(`[Harvest] ✅ Tx confirmed in block ${receipt.blockNumber}`);
+            const harvestId = getHarvestIdFromReceipt(receipt);
+            
+            if (harvestId) {
+                console.log(`[Harvest] 🌾 Harvest started successfully with ID: ${harvestId}`);
+                return { success: true, txHash: tx.hash, harvestId };
+            } else {
+                console.warn(`[Harvest] ⚠️ Tx succeeded but HarvestID could not be parsed from logs.`);
+                return { success: true, txHash: tx.hash, harvestId: undefined };
+            }
         } else {
-            console.warn(`[Harvest] ⚠️ Tx succeeded but HarvestID could not be parsed from logs.`);
-            return { success: true, txHash: tx.hash, harvestId: undefined };
+            console.error(`[Harvest] ❌ Tx reverted.`);
+            return { success: false, error: 'Transaction reverted' };
         }
-    } else {
-        console.error(`[Harvest] ❌ Tx reverted.`);
-        return { success: false, error: 'Transaction reverted' };
+    } catch (error: any) {
+        console.error('[Harvest] 💥 Start failed:', error);
+        return { success: false, error: error.message };
     }
-  } catch (error: any) {
-    console.error('[Harvest] 💥 Start failed:', error);
-    return { success: false, error: error.message };
-  }
+  });
 }
 
 function getHarvestIdFromReceipt(receipt: ethers.TransactionReceipt): string | undefined {
@@ -98,69 +101,71 @@ function getHarvestIdFromReceipt(receipt: ethers.TransactionReceipt): string | u
 }
 
 export async function stopHarvestByKamiId(kamiId: string, privateKey: string): Promise<HarvestResult> {
-  try {
-    const wallet = new ethers.Wallet(privateKey, provider);
-    
-    const systemId = SYSTEMS.HarvestStopSystem.encodedID;
-    const systemAddress = await getSystemAddress(systemId);
-    const contract = new ethers.Contract(systemAddress, HarvestStopSystem.abi, wallet);
+  const wallet = new ethers.Wallet(privateKey, provider);
 
-    console.log(`[Harvest] 🛑 Initiating stopHarvest for Kami #${kamiId}`);
-    console.log(`[Harvest] 🔍 Looking up Kami Profile and active Harvest ID...`);
+  return walletMutex.runExclusive(wallet.address, async () => {
+    try {
+        const systemId = SYSTEMS.HarvestStopSystem.encodedID;
+        const systemAddress = await getSystemAddress(systemId);
+        const contract = new ethers.Contract(systemAddress, HarvestStopSystem.abi, wallet);
 
-    // Lookup HarvestID from system_logs
-    // 1. Get profile ID
-    const { data: profile, error: profileError } = await supabase
-        .from('kami_profiles')
-        .select('id')
-        .eq('kami_entity_id', kamiId)
-        .single();
+        console.log(`[Harvest] 🛑 Initiating stopHarvest for Kami #${kamiId}`);
+        console.log(`[Harvest] 🔍 Looking up Kami Profile and active Harvest ID...`);
 
-    if (profileError || !profile) {
-        console.error(`[Harvest] ❌ Profile lookup failed for Kami #${kamiId}:`, profileError);
-        throw new Error(`Could not find Kami Profile for entity ${kamiId}`);
+        // Lookup HarvestID from system_logs
+        // 1. Get profile ID
+        const { data: profile, error: profileError } = await supabase
+            .from('kami_profiles')
+            .select('id')
+            .eq('kami_entity_id', kamiId)
+            .single();
+
+        if (profileError || !profile) {
+            console.error(`[Harvest] ❌ Profile lookup failed for Kami #${kamiId}:`, profileError);
+            throw new Error(`Could not find Kami Profile for entity ${kamiId}`);
+        }
+        console.log(`[Harvest] ✓ Found Profile ID: ${profile.id}`);
+
+        // 2. Get last auto_start log
+        const { data: log, error: logError } = await supabase
+            .from('system_logs')
+            .select('metadata, created_at')
+            .eq('kami_profile_id', profile.id)
+            .eq('action', 'auto_start')
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        let harvestId: string | undefined;
+        if (log && log.metadata && (log.metadata as any).harvestId) {
+            harvestId = (log.metadata as any).harvestId;
+            console.log(`[Harvest] 🎯 Found Harvest ID: ${harvestId} (from log at ${log.created_at})`);
+        } else {
+            console.warn(`[Harvest] ⚠️ No 'auto_start' log found with harvestId for this profile.`);
+        }
+
+        if (!harvestId) {
+            throw new Error('Could not find active Harvest ID in logs. Cannot stop harvest.');
+        }
+
+        // Pass harvestId, not kamiId
+        console.log(`[Harvest] 📤 Submitting stop transaction for Harvest #${harvestId}...`);
+        const tx = await contract.executeTyped(BigInt(harvestId), { gasLimit: 2000000 });
+        console.log(`[Harvest] ⏳ Tx submitted: ${tx.hash}`);
+        
+        const receipt = await tx.wait();
+        if (receipt.status === 1) {
+            console.log(`[Harvest] ✅ Stop confirmed in block ${receipt.blockNumber}`);
+            return { success: true, txHash: tx.hash };
+        } else {
+            console.error(`[Harvest] ❌ Tx reverted.`);
+            return { success: false, error: 'Transaction reverted' };
+        }
+    } catch (error: any) {
+        console.error('[Harvest] 💥 Stop failed:', error);
+        return { success: false, error: error.message };
     }
-    console.log(`[Harvest] ✓ Found Profile ID: ${profile.id}`);
-
-    // 2. Get last auto_start log
-    const { data: log, error: logError } = await supabase
-        .from('system_logs')
-        .select('metadata, created_at')
-        .eq('kami_profile_id', profile.id)
-        .eq('action', 'auto_start')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
-    let harvestId: string | undefined;
-    if (log && log.metadata && (log.metadata as any).harvestId) {
-        harvestId = (log.metadata as any).harvestId;
-        console.log(`[Harvest] 🎯 Found Harvest ID: ${harvestId} (from log at ${log.created_at})`);
-    } else {
-        console.warn(`[Harvest] ⚠️ No 'auto_start' log found with harvestId for this profile.`);
-    }
-
-    if (!harvestId) {
-        throw new Error('Could not find active Harvest ID in logs. Cannot stop harvest.');
-    }
-
-    // Pass harvestId, not kamiId
-    console.log(`[Harvest] 📤 Submitting stop transaction for Harvest #${harvestId}...`);
-    const tx = await contract.executeTyped(BigInt(harvestId), { gasLimit: 2000000 });
-    console.log(`[Harvest] ⏳ Tx submitted: ${tx.hash}`);
-    
-    const receipt = await tx.wait();
-    if (receipt.status === 1) {
-        console.log(`[Harvest] ✅ Stop confirmed in block ${receipt.blockNumber}`);
-        return { success: true, txHash: tx.hash };
-    } else {
-        console.error(`[Harvest] ❌ Tx reverted.`);
-        return { success: false, error: 'Transaction reverted' };
-    }
-  } catch (error: any) {
-    console.error('[Harvest] 💥 Stop failed:', error);
-    return { success: false, error: error.message };
-  }
+  });
 }
 
 export async function isKamiHarvesting(kamiId: string): Promise<boolean> {
