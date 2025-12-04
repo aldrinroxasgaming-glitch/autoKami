@@ -528,17 +528,18 @@ const CharacterManagerPWA = () => {
 
     try {
       // Query system logs for last harvest start time
-      const logsResponse = await getSystemLogs();
+      if (!user?.id) return;
+      const logsResponse = await getSystemLogs(user.id);
       const lastHarvestStart = logsResponse.logs
         ?.filter((log: any) =>
           log.kami_index === configKami.kami_index &&
           (log.action === 'start_harvest' || log.action === 'auto_start') &&
           log.status === 'success'
         )
-        .sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime())[0];
+        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
 
       if (lastHarvestStart && isCurrentlyHarvesting) {
-        harvestStartTime = new Date(lastHarvestStart.time);
+        harvestStartTime = new Date(lastHarvestStart.created_at);
         currentHarvestTimeElapsed = (Date.now() - harvestStartTime.getTime()) / 1000 / 60; // minutes
       }
     } catch (err) {
