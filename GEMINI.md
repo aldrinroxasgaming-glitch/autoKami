@@ -363,7 +363,31 @@ return timers.map(timer => (
     - **Different Wallets**: Run completely in parallel.
     - **Same Wallet**: Transactions are executed one-by-one to ensure correct nonce usage.
 
-**Result**: High throughput for the system while maintaining on-chain reliability for individual wallets.
+**Result**: High throughput for the system while maintaining on-chain reliability for verified wallets.
+
+### Codebase Conventions & Gotchas
+
+**1. API Response Wrappers**
+- **Rule**: All list endpoints must return a wrapped object, not a raw array.
+  - ✅ Correct: `res.json({ logs: [...] })`
+  - ❌ Wrong: `res.json([...])`
+- **Reason**: Allows adding metadata (count, cursor) later without breaking clients.
+
+**2. Data Field Mapping**
+- **System Logs**:
+  - Database/API: `created_at` (ISO string)
+  - Frontend UI: Mapped to `time` (Locale string) for display.
+- **Account Locations**:
+  - Blockchain/Backend: `room` (uint32)
+  - Frontend: often aliased as `roomIndex`.
+- **Health**:
+  - Database: `current_health` (snake_case)
+  - API/Frontend: `currentHealth` (camelCase) via manual mapping in routes.
+
+**3. Wallet Mutex (CRITICAL)**
+- **Requirement**: All functions that write to the blockchain (`startHarvest`, `stopHarvest`, `craft`, `move`) **MUST** be wrapped in `walletMutex.runExclusive(walletAddress, ...)`.
+- **Location**: `app/src/utils/walletMutex.ts`
+- **Why**: Prevents "account sequence mismatch" (nonce errors) when multiple Kamis controlled by the same wallet try to act simultaneously.
 
 ### Data Flow Strategy (CRITICAL)
 
