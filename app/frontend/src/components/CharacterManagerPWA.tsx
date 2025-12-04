@@ -166,7 +166,7 @@ const CharacterCard = memo(({
       {isAutomationActive && !isDead && (
         <div className="absolute inset-0 border-4 border-green-500 bg-green-400/10 z-20 pointer-events-none rounded">
           <div className="absolute top-0 right-0 bg-green-500 text-white text-[0.6rem] font-bold px-1.5 py-0.5 rounded-bl">
-            AUTO
+            RUNNING
           </div>
         </div>
       )}
@@ -249,16 +249,15 @@ const CharacterDetails = memo(({ char, theme }: {
       <StatRow icon={HarmonyIcon} label="HARMONY" value={char.finalStats.harmony} />
     </div>
 
-    {/* Status indicator */}
-    <div className={`mb-4 p-3 ${theme.card} text-center`}>
-      <div className="font-bold mb-1">Status</div>
-      <div className={`font-bold ${char.running ? 'text-green-500' : 'text-gray-500'}`}>
-        {char.running ? '● Running' : '○ Stopped'}
-      </div>
-    </div>
-  </>
-));
-
+          {/* Status indicator */}
+        <div className={`mb-4 p-3 ${theme.card} text-center`}>
+          <div className="font-bold mb-1">Status</div>
+          <div className={`font-bold ${char.running ? 'text-green-500' : 'text-gray-500'}`}>
+            {char.running ? '● RUNNING' : '○ STOPPED'}
+          </div>
+        </div>
+      </>
+    ));
 CharacterDetails.displayName = 'CharacterDetails';
 
 // Stat row component
