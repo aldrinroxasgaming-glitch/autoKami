@@ -513,13 +513,37 @@ const CharacterManagerPWA = () => {
   }, [selectedChar]);
 
   // Calculate harvest stats
-  const calculateHarvestStats = useCallback(() => {
+  const calculateHarvestStats = useCallback(async () => {
     if (!configKami) return;
 
     const nodeIndex = configKami.automation?.harvestNodeIndex ?? configKami.room.index ?? 0;
     const nodeType = NODE_LIST.find(n => n.id === nodeIndex)?.affinity?.toLowerCase() || 'normal';
     const harvestDuration = configKami.automation?.harvestDuration || 60;
     const restDuration = configKami.automation?.restDuration || 30;
+
+    // Fetch current harvest status from backend
+    let harvestStartTime: Date | null = null;
+    let currentHarvestTimeElapsed = 0;
+    let isCurrentlyHarvesting = configKami.running;
+
+    try {
+      // Query system logs for last harvest start time
+      const logsResponse = await getSystemLogs();
+      const lastHarvestStart = logsResponse.logs
+        ?.filter((log: any) =>
+          log.kami_index === configKami.kami_index &&
+          (log.action === 'start_harvest' || log.action === 'auto_start') &&
+          log.status === 'success'
+        )
+        .sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime())[0];
+
+      if (lastHarvestStart && isCurrentlyHarvesting) {
+        harvestStartTime = new Date(lastHarvestStart.time);
+        currentHarvestTimeElapsed = (Date.now() - harvestStartTime.getTime()) / 1000 / 60; // minutes
+      }
+    } catch (err) {
+      console.error('Failed to fetch harvest start time:', err);
+    }
 
     // Get affinities
     const bodyType = configKami.affinities[0]?.toLowerCase() || 'normal';
@@ -588,6 +612,41 @@ const CharacterManagerPWA = () => {
     const cycleDuration = harvestDuration + restDuration;
     const cyclesUntilDeath = health / Math.abs(totalStrainPerCycle - totalRecoveryPerCycle);
 
+    // Current HP calculations (if harvesting)
+    let currentHP = health;
+    let hpLostSoFar = 0;
+    let estimatedCurrentStrain = strainStart;
+    let recoveryTimeNeeded = 0;
+    let timeTo50Percent = 0;
+    const halfHealth = health * 0.5;
+
+    if (isCurrentlyHarvesting && currentHarvestTimeElapsed > 0) {
+      // Calculate strain at current time
+      const currentIntensity = ((10 + intensityBoost) / 480) * ((5 * violence) + currentHarvestTimeElapsed);
+      const currentMusu = (1 + bountyBoost) * (harvestFertility + currentIntensity);
+      estimatedCurrentStrain = (6.5 * (1 - strainDecrease) * currentMusu) / (harmony + 20);
+
+      // Calculate HP lost (using average strain from start to now)
+      const avgStrainSoFar = (strainStart + estimatedCurrentStrain) / 2;
+      hpLostSoFar = avgStrainSoFar * (currentHarvestTimeElapsed / 60); // hours
+      currentHP = health - hpLostSoFar;
+
+      // Calculate recovery time needed to restore lost HP
+      recoveryTimeNeeded = hpLostSoFar / recovery; // hours
+
+      // Calculate time to 50% HP
+      const hpToLose = currentHP - halfHealth;
+      if (hpToLose > 0 && estimatedCurrentStrain > 0) {
+        timeTo50Percent = hpToLose / estimatedCurrentStrain; // hours
+      } else if (currentHP <= halfHealth) {
+        timeTo50Percent = 0; // Already below 50%
+      }
+    } else {
+      // Not currently harvesting - calculate theoretical time to 50%
+      const hpToLose = health - halfHealth;
+      timeTo50Percent = hpToLose / avgStrain; // hours
+    }
+
     setHarvestCalc({
       nodeType,
       bodyType,
@@ -612,7 +671,16 @@ const CharacterManagerPWA = () => {
       cyclesUntilDeath,
       isSustainable: netHpPerCycle >= 0,
       harvestDuration,
-      restDuration
+      restDuration,
+      // New current HP fields
+      isCurrentlyHarvesting,
+      currentHarvestTimeElapsed,
+      currentHP,
+      hpLostSoFar,
+      estimatedCurrentStrain,
+      recoveryTimeNeeded,
+      timeTo50Percent,
+      halfHealth
     });
   }, [configKami]);
 
@@ -644,7 +712,16 @@ const CharacterManagerPWA = () => {
             }
         }
 
-        addLog(`Auto craft settings updated for ${profileName}. Current Stamina: ${staminaMsg}`, 'success');
+        // Construct detailed change log
+        const changes = [];
+        if (settings.autoHarvestEnabled !== undefined) changes.push(`Harvest: ${settings.autoHarvestEnabled ? 'Enabled' : 'Disabled'}`);
+        if (settings.autoCraftEnabled !== undefined) changes.push(`Craft: ${settings.autoCraftEnabled ? 'Enabled' : 'Disabled'}`);
+        if (settings.harvestNodeIndex !== undefined) changes.push(`Node: #${settings.harvestNodeIndex}`);
+        if (settings.craftingRecipeId !== undefined) changes.push(`Recipe: #${settings.craftingRecipeId} (x${settings.craftingAmount || configKami.automation?.craftingAmount || 1})`);
+        
+        const details = changes.length > 0 ? changes.join(', ') : 'General Settings';
+
+        addLog(`Updated ${profileName}: ${details}. Current Stamina: ${staminaMsg}`, 'success');
         
         setCharacters(chars => chars.map(c => 
           c.id === configKami.id ? { ...c, automation: { ...c.automation, ...settings } } : c
@@ -1214,6 +1291,78 @@ const CharacterManagerPWA = () => {
                       {configKami.affinities.join('/')} on {harvestCalc.nodeType.toUpperCase()}
                     </span>
                   </div>
+
+                  {/* Current HP Status (if harvesting) */}
+                  {harvestCalc.isCurrentlyHarvesting && (
+                    <div className="bg-blue-900/30 p-3 rounded border border-blue-700">
+                      <div className="text-xs text-blue-400 font-bold mb-2">⚡ CURRENT STATUS (LIVE)</div>
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <div className="text-gray-400">Harvest Time</div>
+                          <div className="font-bold text-white">{Math.floor(harvestCalc.currentHarvestTimeElapsed)} mins</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-400">Current HP</div>
+                          <div className={`font-bold text-lg ${
+                            harvestCalc.currentHP > harvestCalc.halfHealth ? 'text-green-400' :
+                            harvestCalc.currentHP > harvestCalc.halfHealth * 0.5 ? 'text-yellow-400' :
+                            'text-red-400'
+                          }`}>
+                            {Math.max(0, harvestCalc.currentHP).toFixed(1)} HP
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-blue-800 grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <div className="text-gray-400">HP Lost</div>
+                          <div className="font-bold text-red-300">{harvestCalc.hpLostSoFar.toFixed(1)} HP</div>
+                        </div>
+                        <div>
+                          <div className="text-gray-400">Current Strain</div>
+                          <div className="font-bold text-red-300">{harvestCalc.estimatedCurrentStrain.toFixed(2)} HP/hr</div>
+                        </div>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-blue-800 space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Recovery Time Needed:</span>
+                          <span className="font-bold text-blue-300">
+                            {(harvestCalc.recoveryTimeNeeded * 60).toFixed(0)} mins
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Time to 50% HP:</span>
+                          <span className={`font-bold ${harvestCalc.timeTo50Percent === 0 ? 'text-red-400' : 'text-yellow-300'}`}>
+                            {harvestCalc.timeTo50Percent === 0 ?
+                              'ALREADY BELOW 50%!' :
+                              `${(harvestCalc.timeTo50Percent * 60).toFixed(0)} mins`
+                            }
+                          </span>
+                        </div>
+                      </div>
+                      {/* HP Bar */}
+                      <div className="mt-3">
+                        <div className="flex justify-between text-xs text-gray-400 mb-1">
+                          <span>HP Progress</span>
+                          <span>{((harvestCalc.currentHP / configKami.finalStats.health) * 100).toFixed(1)}%</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                          <div
+                            className={`h-full transition-all ${
+                              harvestCalc.currentHP > harvestCalc.halfHealth ? 'bg-green-500' :
+                              harvestCalc.currentHP > harvestCalc.halfHealth * 0.5 ? 'bg-yellow-500' :
+                              'bg-red-500'
+                            }`}
+                            style={{ width: `${Math.max(0, Math.min(100, (harvestCalc.currentHP / configKami.finalStats.health) * 100))}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-[0.65rem] text-gray-500 mt-1">
+                          <span>0</span>
+                          <span className="text-yellow-400">50% ({harvestCalc.halfHealth.toFixed(0)} HP)</span>
+                          <span>{configKami.finalStats.health} HP</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Affinity */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
