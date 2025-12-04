@@ -1748,8 +1748,7 @@ const CharacterManagerPWA = () => {
                   );
                 }
                 return null;
-              })()}
-
+              })()} 
             </div>
 
             <div className="bg-gray-800 p-4 border-t-4 border-gray-700 flex justify-end gap-3">
